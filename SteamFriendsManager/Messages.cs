@@ -41,6 +41,14 @@ namespace SteamFriendsManager
         }
     }
 
+    internal class ClearPageHistoryMessage : MessageBase
+    {
+    }
+
+    internal class ClearPageHistoryOnNextTryLoginMessage : MessageBase
+    {
+    }
+
     internal interface IMessageDialogMessage
     {
         string Title { get; set; }
