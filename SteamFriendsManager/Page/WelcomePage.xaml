@@ -4,6 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+             xmlns:ei="http://schemas.microsoft.com/expression/2010/interactions"
              mc:Ignorable="d"
              DataContext="{Binding WelcomePage, Mode=OneTime, Source={StaticResource Locator}}"
              d:DesignHeight="600" d:DesignWidth="870">
@@ -29,9 +30,6 @@
                         <Paragraph>批量删除好友</Paragraph>
                     </ListItem>
                     <ListItem>
-                        <Paragraph>和任一好友进行聊天</Paragraph>
-                    </ListItem>
-                    <ListItem>
                         <Paragraph>向好友群发消息</Paragraph>
                     </ListItem>
                     <ListItem>
@@ -48,8 +46,8 @@
                     <Hyperlink NavigateUri="http://steamcn.com/t117808-1-1">
                         <i:Interaction.Triggers>
                             <i:EventTrigger EventName="RequestNavigate">
-                                <i:InvokeCommandAction Command="{Binding NavigateToSupportPage, Mode=OneWay}"
-                                                       CommandParameter="{Binding Path=NavigateUri, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Hyperlink}}}" />
+                                <ei:LaunchUriOrFileAction
+                                    Path="{Binding Path=NavigateUri, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Hyperlink}}}" />
                             </i:EventTrigger>
                         </i:Interaction.Triggers>
                         <Run
@@ -67,7 +65,5 @@
                 Command="{Binding SwitchToLoginPage, Mode=OneWay}">
             登录
         </Button>
-        <Button Content="Test?" Command="{Binding TestConnect, Mode=OneWay}" HorizontalAlignment="Left" Height="51"
-                Margin="123,36,0,0" Grid.Row="1" VerticalAlignment="Top" Width="105" />
     </Grid>
 </UserControl>

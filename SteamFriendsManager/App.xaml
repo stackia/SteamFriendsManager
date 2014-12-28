@@ -11,7 +11,8 @@
                 <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Accents/Emerald.xaml" />
                 <ResourceDictionary
                     Source="pack://application:,,,/MahApps.Metro;component/Styles/Accents/BaseDark.xaml" />
-                <ResourceDictionary Source="/Resources/Icons.xaml" />
+                <ResourceDictionary Source="Utility/TransitioningContentControl.xaml" />
+                <ResourceDictionary Source="Resources/Icons.xaml" />
             </ResourceDictionary.MergedDictionaries>
 
             <FontFamily x:Key="DefaultFont">Segoe UI, Lucida Sans Unicode, Verdana, Microsoft JhengHei UI Light</FontFamily>

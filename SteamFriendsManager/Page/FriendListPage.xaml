@@ -3,6 +3,8 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+    xmlns:ei="http://schemas.microsoft.com/expression/2010/interactions"
     xmlns:converter="clr-namespace:SteamFriendsManager.Converter"
     xmlns:utils="clr-namespace:SteamFriendsManager.Utility"
     x:Class="SteamFriendsManager.Page.FriendListPage"
@@ -149,7 +151,8 @@
             <RowDefinition />
         </Grid.RowDefinitions>
         <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Height="58" Margin="15, 10, 15, 0">
-            <Button Style="{DynamicResource OperationButtonStyle}" Margin="5, 0" Width="60" Command="{Binding SwitchAccount, Mode=OneWay}">
+            <Button Style="{DynamicResource OperationButtonStyle}" Margin="5, 0" Width="60"
+                    Command="{Binding SwitchAccount, Mode=OneWay}">
                 <StackPanel Margin="0, 7, 0, 0">
                     <Rectangle Width="25" Height="25"
                                Fill="{Binding Foreground, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Button}}}">
@@ -160,15 +163,38 @@
                     <Label FontFamily="Microsoft YaHei UI">切换帐号</Label>
                 </StackPanel>
             </Button>
+            <Button Style="{DynamicResource OperationButtonStyle}" Margin="5, 0" Width="60"
+                    Command="{Binding RefreshFrineds}">
+                <StackPanel Margin="0, 5, 0, 0">
+                    <Rectangle Width="25" Height="25"
+                               Fill="{Binding Foreground, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Button}}}">
+                        <Rectangle.OpacityMask>
+                            <VisualBrush Stretch="Fill" Visual="{StaticResource appbar_refresh}" />
+                        </Rectangle.OpacityMask>
+                    </Rectangle>
+                    <Label FontFamily="Microsoft YaHei UI">刷新列表</Label>
+                </StackPanel>
+            </Button>
             <Button Style="{DynamicResource OperationButtonStyle}" Margin="5, 0" Width="60">
                 <StackPanel Margin="0, 5, 0, 0">
                     <Rectangle Width="25" Height="25"
                                Fill="{Binding Foreground, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Button}}}">
                         <Rectangle.OpacityMask>
-                            <VisualBrush Stretch="Fill" Visual="{StaticResource appbar_chat}" />
+                            <VisualBrush Stretch="Fill" Visual="{StaticResource appbar_message_send}" />
                         </Rectangle.OpacityMask>
                     </Rectangle>
-                    <Label FontFamily="Microsoft YaHei UI">聊天</Label>
+                    <Label FontFamily="Microsoft YaHei UI">发送消息</Label>
+                </StackPanel>
+            </Button>
+            <Button Style="{DynamicResource OperationButtonStyle}" Margin="5, 0" Width="60">
+                <StackPanel Margin="0, 5, 0, 0">
+                    <Rectangle Width="25" Height="25"
+                               Fill="{Binding Foreground, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Button}}}">
+                        <Rectangle.OpacityMask>
+                            <VisualBrush Stretch="Fill" Visual="{StaticResource appbar_user_add}" />
+                        </Rectangle.OpacityMask>
+                    </Rectangle>
+                    <Label FontFamily="Microsoft YaHei UI">添加好友</Label>
                 </StackPanel>
             </Button>
             <Button Style="{DynamicResource OperationButtonStyle}" Margin="5, 0" Width="60">

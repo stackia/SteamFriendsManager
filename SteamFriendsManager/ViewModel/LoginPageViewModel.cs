@@ -10,12 +10,12 @@ namespace SteamFriendsManager.ViewModel
 {
     public class LoginPageViewModel : ViewModelBase
     {
+        private bool _clearPageHistoryOnNextTryLogin;
         private bool _isLoading;
         private RelayCommand _login;
         private string _password;
         private bool _shouldRememberAccount;
         private string _username;
-        private bool _clearPageHistoryOnNextTryLogin;
         private readonly ApplicationSettingsService _applicationSettingsService;
         private readonly SteamClientService _steamClientService;
 
@@ -32,10 +32,8 @@ namespace SteamFriendsManager.ViewModel
                 _password = _applicationSettingsService.Settings.LastPassword;
             }
 
-            MessengerInstance.Register<ClearPageHistoryOnNextTryLoginMessage>(this, msg =>
-            {
-                _clearPageHistoryOnNextTryLogin = true;
-            });
+            MessengerInstance.Register<ClearPageHistoryOnNextTryLoginMessage>(this,
+                msg => { _clearPageHistoryOnNextTryLogin = true; });
         }
 
         public bool ShouldRememberAccount

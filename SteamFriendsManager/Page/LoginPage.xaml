@@ -18,75 +18,54 @@
                     <VisualTransition GeneratedDuration="0" />
                     <VisualTransition From="NotLoading" GeneratedDuration="0" To="Loading">
                         <Storyboard>
-                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)"
-                                                           Storyboard.TargetName="LoadingProgressBar">
-                                <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Visible}" />
-                            </ObjectAnimationUsingKeyFrames>
-                            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)"
-                                                           Storyboard.TargetName="LoadingProgressBar">
-                                <EasingDoubleKeyFrame KeyTime="0" Value="0" />
-                                <EasingDoubleKeyFrame KeyTime="0:0:0.5" Value="1" />
-                            </DoubleAnimationUsingKeyFrames>
-                            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)"
-                                                           Storyboard.TargetName="RememberAccountCheckBox">
-                                <EasingDoubleKeyFrame KeyTime="0:0:0.5" Value="0" />
-                            </DoubleAnimationUsingKeyFrames>
-                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)"
-                                                           Storyboard.TargetName="RememberAccountCheckBox">
-                                <DiscreteObjectKeyFrame KeyTime="0:0:0.5" Value="{x:Static Visibility.Collapsed}" />
-                            </ObjectAnimationUsingKeyFrames>
-                            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)"
-                                                           Storyboard.TargetName="LoginButton">
-                                <EasingDoubleKeyFrame KeyTime="0:0:0.5" Value="0" />
-                            </DoubleAnimationUsingKeyFrames>
-                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)"
-                                                           Storyboard.TargetName="LoginButton">
-                                <DiscreteObjectKeyFrame KeyTime="0:0:0.5" Value="{x:Static Visibility.Collapsed}" />
-                            </ObjectAnimationUsingKeyFrames>
+                            <DoubleAnimation Duration="0:0:0.5" To="0" Storyboard.TargetProperty="(UIElement.Opacity)"
+                                             Storyboard.TargetName="LoginButton" />
+                            <DoubleAnimation Duration="0:0:0.5" To="1" Storyboard.TargetProperty="(UIElement.Opacity)"
+                                             Storyboard.TargetName="LoadingProgressBar" />
+                            <DoubleAnimation Duration="0:0:0.5" To="0" Storyboard.TargetProperty="(UIElement.Opacity)"
+                                             Storyboard.TargetName="RememberAccountCheckBox" />
                             <BooleanAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.IsHitTestVisible)"
                                                             Storyboard.TargetName="LoginButton">
                                 <DiscreteBooleanKeyFrame KeyTime="0" Value="False" />
                             </BooleanAnimationUsingKeyFrames>
+                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)"
+                                                           Storyboard.TargetName="LoginButton">
+                                <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Visible}" />
+                            </ObjectAnimationUsingKeyFrames>
                             <BooleanAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.IsHitTestVisible)"
                                                             Storyboard.TargetName="RememberAccountCheckBox">
                                 <DiscreteBooleanKeyFrame KeyTime="0" Value="False" />
                             </BooleanAnimationUsingKeyFrames>
+                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)"
+                                                           Storyboard.TargetName="RememberAccountCheckBox">
+                                <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Visible}" />
+                            </ObjectAnimationUsingKeyFrames>
+                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)"
+                                                           Storyboard.TargetName="LoadingProgressBar">
+                                <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Visible}" />
+                            </ObjectAnimationUsingKeyFrames>
                         </Storyboard>
                     </VisualTransition>
-                    <VisualTransition From="Loading" GeneratedDuration="0" To="NotLoading">
+                    <VisualTransition From="Loading" GeneratedDuration="0:0:0.5" To="NotLoading">
                         <Storyboard>
-                            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)"
-                                                           Storyboard.TargetName="LoadingProgressBar">
-                                <EasingDoubleKeyFrame KeyTime="0:0:0.5" Value="0" />
-                            </DoubleAnimationUsingKeyFrames>
                             <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)"
                                                            Storyboard.TargetName="LoadingProgressBar">
-                                <DiscreteObjectKeyFrame KeyTime="0:0:0.5" Value="{x:Static Visibility.Collapsed}" />
-                            </ObjectAnimationUsingKeyFrames>
-                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)"
-                                                           Storyboard.TargetName="RememberAccountCheckBox">
                                 <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Visible}" />
                             </ObjectAnimationUsingKeyFrames>
                             <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)"
                                                            Storyboard.TargetName="LoginButton">
                                 <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Visible}" />
                             </ObjectAnimationUsingKeyFrames>
-                            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)"
-                                                           Storyboard.TargetName="LoginButton">
-                                <EasingDoubleKeyFrame KeyTime="0" Value="0" />
-                                <EasingDoubleKeyFrame KeyTime="0:0:0.5" Value="1" />
-                            </DoubleAnimationUsingKeyFrames>
-                            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)"
-                                                           Storyboard.TargetName="RememberAccountCheckBox">
-                                <EasingDoubleKeyFrame KeyTime="0" Value="0" />
-                                <EasingDoubleKeyFrame KeyTime="0:0:0.5" Value="1" />
-                            </DoubleAnimationUsingKeyFrames>
-                            <BooleanAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.IsHitTestVisible)"
-                                                            Storyboard.TargetName="RememberAccountCheckBox">
-                                <DiscreteBooleanKeyFrame KeyTime="0" Value="True" />
-                            </BooleanAnimationUsingKeyFrames>
                             <BooleanAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.IsHitTestVisible)"
                                                             Storyboard.TargetName="LoginButton">
+                                <DiscreteBooleanKeyFrame KeyTime="0" Value="True" />
+                            </BooleanAnimationUsingKeyFrames>
+                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)"
+                                                           Storyboard.TargetName="RememberAccountCheckBox">
+                                <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Visible}" />
+                            </ObjectAnimationUsingKeyFrames>
+                            <BooleanAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.IsHitTestVisible)"
+                                                            Storyboard.TargetName="RememberAccountCheckBox">
                                 <DiscreteBooleanKeyFrame KeyTime="0" Value="True" />
                             </BooleanAnimationUsingKeyFrames>
                         </Storyboard>
@@ -162,8 +141,6 @@
                 <ColumnDefinition Width="13*" />
                 <ColumnDefinition Width="7*" />
             </Grid.ColumnDefinitions>
-            <metro:MetroProgressBar x:Name="LoadingProgressBar" IsIndeterminate="True" Grid.ColumnSpan="2"
-                                    Foreground="{DynamicResource AccentColorBrush}" Opacity="0" Visibility="Collapsed" />
             <CheckBox x:Name="RememberAccountCheckBox" Grid.Column="0"
                       IsChecked="{Binding ShouldRememberAccount, Mode=TwoWay}">
                 记住用户名、密码
@@ -172,6 +149,10 @@
                     Command="{Binding Login, Mode=OneWay}">
                 登录
             </Button>
+            <metro:MetroProgressBar x:Name="LoadingProgressBar" IsIndeterminate="True" Grid.ColumnSpan="2"
+                                    Grid.Column="0"
+                                    Foreground="{DynamicResource AccentColorBrush}" Opacity="0" Visibility="Collapsed"
+                                    IsHitTestVisible="False" />
         </Grid>
         <Label Margin="0, 20, 0, 40" FontSize="14">* 本软件不会收集任何用户信息，如果你有任何疑问，请到论坛咨询</Label>
     </StackPanel>

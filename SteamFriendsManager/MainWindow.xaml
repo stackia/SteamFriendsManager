@@ -7,6 +7,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
     xmlns:ei="http://schemas.microsoft.com/expression/2010/interactions"
+    xmlns:utils="clr-namespace:SteamFriendsManager.Utility"
     xmlns:cvt="clr-namespace:SteamFriendsManager.Converter" mc:Ignorable="d"
     x:Class="SteamFriendsManager.MainWindow"
     Title="Steam 好友管理器"
@@ -25,38 +26,55 @@
         </i:EventTrigger>
     </i:Interaction.Triggers>
 
-    <Grid
-        IsHitTestVisible="{Binding IsTransitioning, Converter={StaticResource InverseBooleanConverter}, ElementName=PageContentControl}">
+    <Grid>
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup x:Name="SwitchBackButtonVisibilityGroup">
                 <VisualStateGroup.Transitions>
                     <VisualTransition GeneratedDuration="0" />
+                    <VisualTransition From="SwitchBackButtonCollapsed" GeneratedDuration="0:0:0.3"
+                                      To="SwitchBackButtonVisible">
+                        <Storyboard>
+                            <DoubleAnimation Duration="0:0:0.3" To="1" Storyboard.TargetProperty="(UIElement.Opacity)"
+                                             Storyboard.TargetName="SwitchBackButton" />
+                            <BooleanAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.IsHitTestVisible)"
+                                                            Storyboard.TargetName="SwitchBackButton">
+                                <DiscreteBooleanKeyFrame KeyTime="0" Value="True" />
+                            </BooleanAnimationUsingKeyFrames>
+                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)"
+                                                           Storyboard.TargetName="SwitchBackButton">
+                                <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Visible}" />
+                            </ObjectAnimationUsingKeyFrames>
+                        </Storyboard>
+                    </VisualTransition>
+                    <VisualTransition From="SwitchBackButtonVisible" GeneratedDuration="0:0:0.3"
+                                      To="SwitchBackButtonCollapsed">
+                        <Storyboard>
+                            <BooleanAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.IsHitTestVisible)"
+                                                            Storyboard.TargetName="SwitchBackButton">
+                                <DiscreteBooleanKeyFrame KeyTime="0" Value="False" />
+                            </BooleanAnimationUsingKeyFrames>
+                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)"
+                                                           Storyboard.TargetName="SwitchBackButton">
+                                <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Visible}" />
+                            </ObjectAnimationUsingKeyFrames>
+                        </Storyboard>
+                    </VisualTransition>
                 </VisualStateGroup.Transitions>
-                <VisualState x:Name="SwitchBackButtonCollapsed">
-                    <Storyboard>
-                        <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)"
-                                                       Storyboard.TargetName="SwitchBackButton">
-                            <EasingDoubleKeyFrame KeyTime="0" Value="1" />
-                            <EasingDoubleKeyFrame KeyTime="0:0:0.3" Value="0" />
-                        </DoubleAnimationUsingKeyFrames>
-                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)"
-                                                       Storyboard.TargetName="SwitchBackButton">
-                            <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Visible}" />
-                            <DiscreteObjectKeyFrame KeyTime="0:0:0.3" Value="{x:Static Visibility.Collapsed}" />
-                        </ObjectAnimationUsingKeyFrames>
-                    </Storyboard>
-                </VisualState>
+                <VisualState x:Name="SwitchBackButtonCollapsed" />
                 <VisualState x:Name="SwitchBackButtonVisible">
                     <Storyboard>
                         <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)"
                                                        Storyboard.TargetName="SwitchBackButton">
-                            <EasingDoubleKeyFrame KeyTime="0" Value="0" />
-                            <EasingDoubleKeyFrame KeyTime="0:0:0.3" Value="1" />
+                            <EasingDoubleKeyFrame KeyTime="0" Value="1" />
                         </DoubleAnimationUsingKeyFrames>
                         <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)"
                                                        Storyboard.TargetName="SwitchBackButton">
                             <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Visible}" />
                         </ObjectAnimationUsingKeyFrames>
+                        <BooleanAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.IsHitTestVisible)"
+                                                        Storyboard.TargetName="SwitchBackButton">
+                            <DiscreteBooleanKeyFrame KeyTime="0" Value="True" />
+                        </BooleanAnimationUsingKeyFrames>
                     </Storyboard>
                 </VisualState>
             </VisualStateGroup>
@@ -77,12 +95,12 @@
             </i:EventTrigger>
         </i:Interaction.Triggers>
 
-        <metro:TransitioningContentControl x:Name="PageContentControl" Content="{Binding CurrentPage}"
+        <utils:TransitioningContentControl Content="{Binding CurrentPage}"
                                            Transition="Left"
                                            RestartTransitionOnContentChange="True" />
         <Button x:Name="SwitchBackButton" Width="50" Height="50" Style="{DynamicResource MetroCircleButtonStyle}"
                 Command="{Binding SwitchBack, Mode=OneWay}" VerticalAlignment="Top" HorizontalAlignment="Left"
-                Opacity="0" Margin="10, 10, 0, 0" Visibility="Collapsed">
+                Opacity="0" Margin="10, 10, 0, 0" Visibility="Collapsed" IsHitTestVisible="False">
             <Rectangle Width="20" Height="20"
                        Fill="{Binding Foreground, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Button}}}">
                 <Rectangle.OpacityMask>

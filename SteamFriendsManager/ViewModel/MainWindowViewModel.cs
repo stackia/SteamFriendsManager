@@ -37,7 +37,7 @@ namespace SteamFriendsManager.ViewModel
                     {
                         PageHistory.Push(CurrentPage);
                     }
-                    RaiseSwitchBackCanExecuteChanged();
+                    RaisePropertyChanged(() => SwitchBackButtonVisible);
                 });
             });
 
@@ -47,7 +47,7 @@ namespace SteamFriendsManager.ViewModel
                 {
                     PageHistory.Clear();
                     PageHistory.Push(CurrentPage);
-                    RaiseSwitchBackCanExecuteChanged();
+                    RaisePropertyChanged(() => SwitchBackButtonVisible);
                 });
             });
         }
@@ -79,11 +79,13 @@ namespace SteamFriendsManager.ViewModel
             {
                 return _switchBack ?? (_switchBack = new RelayCommand(() =>
                 {
+                    if (PageHistory.Count <= 1)
+                        return;
+
                     PageHistory.Pop();
                     CurrentPage = PageHistory.Peek();
-                    RaiseSwitchBackCanExecuteChanged();
-                },
-                    () => SwitchBackButtonVisible));
+                    RaisePropertyChanged(() => SwitchBackButtonVisible);
+                }));
             }
         }
 
@@ -94,12 +96,6 @@ namespace SteamFriendsManager.ViewModel
                 return _stopSteamService ??
                        (_stopSteamService = new RelayCommand(async () => { await _steamClientService.StopAsync(); }));
             }
-        }
-
-        private void RaiseSwitchBackCanExecuteChanged()
-        {
-            RaisePropertyChanged(() => SwitchBackButtonVisible);
-            SwitchBack.RaiseCanExecuteChanged();
         }
     }
 }

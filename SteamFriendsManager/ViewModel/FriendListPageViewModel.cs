@@ -7,6 +7,8 @@ namespace SteamFriendsManager.ViewModel
 {
     public class FriendListPageViewModel : ViewModelBase
     {
+        private RelayCommand _refreshFriends;
+        private RelayCommand _switchAccount;
         private readonly SteamClientService _steamClientService;
 
         public FriendListPageViewModel(SteamClientService steamClientService)
@@ -19,8 +21,6 @@ namespace SteamFriendsManager.ViewModel
             get { return _steamClientService.Friends; }
         }
 
-        private RelayCommand _switchAccount;
-
         public RelayCommand SwitchAccount
         {
             get
@@ -30,6 +30,15 @@ namespace SteamFriendsManager.ViewModel
                     MessengerInstance.Send(new ClearPageHistoryOnNextTryLoginMessage());
                     MessengerInstance.Send(new SwitchPageMessage(SwitchPageMessage.Page.Login));
                 }));
+            }
+        }
+
+        public RelayCommand RefreshFrineds
+        {
+            get
+            {
+                return _refreshFriends ??
+                       (_refreshFriends = new RelayCommand(() => { RaisePropertyChanged(() => Friends); }));
             }
         }
     }
