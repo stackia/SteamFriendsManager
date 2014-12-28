@@ -154,7 +154,6 @@
     </Compile>
     <Compile Include="Service\ApplicationSettingsService.cs" />
     <Compile Include="Service\SteamClientService.cs" />
-    <Compile Include="Utility\Image.cs" />
     <Compile Include="Utility\PasswordBoxHelper.cs" />
     <Compile Include="Utility\TransitioningContentControl.cs" />
     <Compile Include="Utility\VisualStates.cs" />
@@ -251,6 +250,12 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Logo.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\CachedImage\source\CachedImage.csproj">
+      <Project>{6743ee2a-981b-4cc1-bd29-1d7490bc71e4}</Project>
+      <Name>CachedImage</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

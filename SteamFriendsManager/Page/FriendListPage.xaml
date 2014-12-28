@@ -6,7 +6,7 @@
     xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
     xmlns:ei="http://schemas.microsoft.com/expression/2010/interactions"
     xmlns:converter="clr-namespace:SteamFriendsManager.Converter"
-    xmlns:utils="clr-namespace:SteamFriendsManager.Utility"
+    xmlns:cachedImage="clr-namespace:CachedImage;assembly=CachedImage"
     x:Class="SteamFriendsManager.Page.FriendListPage"
     mc:Ignorable="d"
     d:DesignHeight="600"
@@ -246,7 +246,7 @@
                             <ColumnDefinition Width="50" />
                             <ColumnDefinition />
                         </Grid.ColumnDefinitions>
-                        <utils:Image Margin="3" Stretch="UniformToFill"
+                        <cachedImage:Image Margin="3" Stretch="UniformToFill"
                                      ImageUrl="{Binding Avatar, Mode=OneWay, Converter={StaticResource SteamFriendAvatarConverter}}" />
                         <Label Grid.Column="1" Grid.Row="0" Content="{Binding PersonalName, Mode=OneWay}"
                                FontFamily="Microsoft YaHei UI" VerticalAlignment="Center" FontSize="16"
