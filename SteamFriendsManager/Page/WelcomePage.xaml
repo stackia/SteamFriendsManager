@@ -1,0 +1,73 @@
+﻿<UserControl x:Class="SteamFriendsManager.Page.WelcomePage"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+             mc:Ignorable="d"
+             DataContext="{Binding WelcomePage, Mode=OneTime, Source={StaticResource Locator}}"
+             d:DesignHeight="600" d:DesignWidth="800">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="209*" />
+            <RowDefinition Height="91*" MaxHeight="180" />
+        </Grid.RowDefinitions>
+        <RichTextBox Margin="50,30,50,5" IsReadOnly="True" Focusable="False" IsDocumentEnabled="True"
+                     BorderThickness="0" Cursor="Arrow" MaxWidth="600"
+                     ContextMenu="{x:Null}" Block.LineHeight="12" VerticalScrollBarVisibility="Auto">
+            <FlowDocument FontSize="16">
+                <Paragraph TextAlignment="Center" Padding="0,0,0,6">
+                    <Run Text="Steam 好友管理器 " FontSize="32" FontFamily="Microsoft JhengHei UI Light" />
+                    <Run Text="1.0" FontSize="20" />
+                </Paragraph>
+                <Paragraph>特色功能：</Paragraph>
+                <List MarkerStyle="Circle">
+                    <ListItem>
+                        <Paragraph>快速添加好友</Paragraph>
+                    </ListItem>
+                    <ListItem>
+                        <Paragraph>批量删除好友</Paragraph>
+                    </ListItem>
+                    <ListItem>
+                        <Paragraph>和任一好友进行聊天</Paragraph>
+                    </ListItem>
+                    <ListItem>
+                        <Paragraph>向好友群发消息</Paragraph>
+                    </ListItem>
+                    <ListItem>
+                        <Paragraph>修改 Steam 在线状态（在线、离开、打盹、忙碌、离线）</Paragraph>
+                    </ListItem>
+                    <ListItem>
+                        <Paragraph>修改自己的昵称</Paragraph>
+                    </ListItem>
+                </List>
+                <Paragraph>作者：Stackia</Paragraph>
+                <Paragraph>
+                    新版发布及常见问题：
+                    <LineBreak />
+                    <Hyperlink NavigateUri="http://steamcn.com/t117808-1-1">
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="RequestNavigate">
+                                <i:InvokeCommandAction Command="{Binding NavigateToSupportPage, Mode=OneWay}"
+                                                       CommandParameter="{Binding Path=NavigateUri, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Hyperlink}}}" />
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>
+                        <Run
+                            Text="{Binding Path=NavigateUri, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Hyperlink}}}" />
+                    </Hyperlink>
+                </Paragraph>
+                <Paragraph>
+                    由于需要登录你的 Steam 帐号，请确保在安全的环境中运行此工具。
+                    <LineBreak />
+                    本软件不会收集任何用户信息。
+                </Paragraph>
+            </FlowDocument>
+        </RichTextBox>
+        <Button Grid.Row="1" FontSize="36" HorizontalAlignment="Center" VerticalAlignment="Center" Padding="80, 20"
+                Command="{Binding SwitchToLoginPage, Mode=OneWay}">
+            登录
+        </Button>
+        <Button Content="Test?" Command="{Binding TestConnect, Mode=OneWay}" HorizontalAlignment="Left" Height="51"
+                Margin="123,36,0,0" Grid.Row="1" VerticalAlignment="Top" Width="105" />
+    </Grid>
+</UserControl>
