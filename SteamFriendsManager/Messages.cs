@@ -88,6 +88,15 @@ namespace SteamFriendsManager
             Message = message;
         }
 
+        public ShowInputDialogMessage(string title, string message, string defaultText, Action<string> callback)
+            : base(null, callback)
+        {
+            Title = title;
+            Message = message;
+            DefaultText = defaultText;
+        }
+
+        public string DefaultText { get; set; }
         public string Title { get; set; }
         public string Message { get; set; }
     }

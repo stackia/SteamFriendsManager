@@ -11,7 +11,7 @@ using SteamKit2;
 
 namespace SteamFriendsManager.Service
 {
-    public class SteamClientService : IDisposable
+    public class SteamClientService : IDisposable, INotifyPropertyChanged
     {
         private CancellationTokenSource _callbackHandlerCancellationTokenSource;
         private TaskCompletionSource<SteamClient.ConnectedCallback> _connectTaskCompletionSource;
@@ -20,8 +20,10 @@ namespace SteamFriendsManager.Service
         private string _lastLoginUsername;
         private TaskCompletionSource<SteamUser.LoggedOnCallback> _loginTaskCompletionSource;
         private TaskCompletionSource<SteamUser.LoggedOffCallback> _logoutTaskCompletionSource;
+        private TaskCompletionSource<SteamUser.AccountInfoCallback> _setPersonalNameTaskCompletionSource;
         private readonly ApplicationSettingsService _applicationSettingsService;
         private readonly SteamClient _steamClient;
+        private readonly SteamFriends _steamFriends;
         private readonly SteamUser _steamUser;
 
         public SteamClientService(ApplicationSettingsService applicationSettingsService)
@@ -31,8 +33,8 @@ namespace SteamFriendsManager.Service
             DefaultTimeout = TimeSpan.FromMilliseconds(15000);
             _steamClient = new SteamClient();
             _steamUser = _steamClient.GetHandler<SteamUser>();
-            var steamFriends = _steamClient.GetHandler<SteamFriends>();
-            Friends = new FriendList(steamFriends);
+            _steamFriends = _steamClient.GetHandler<SteamFriends>();
+            Friends = new FriendList(_steamFriends);
         }
 
         public TimeSpan DefaultTimeout { get; set; }
@@ -44,10 +46,30 @@ namespace SteamFriendsManager.Service
 
         public FriendList Friends { get; private set; }
 
+        public string PersonalName
+        {
+            get { return _steamFriends.GetPersonaName(); }
+            set
+            {
+                if (_steamFriends.GetPersonaName() == value)
+                    return;
+
+                SetPersonalNameAsync(value);
+            }
+        }
+
         public void Dispose()
         {
             Dispose(true);
             GC.SuppressFinalize(this);
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        private void OnPropertyChanged(string propertyName)
+        {
+            var handler = PropertyChanged;
+            if (handler != null) handler(this, new PropertyChangedEventArgs(propertyName));
         }
 
         private void Dispose(bool disposing)
@@ -134,6 +156,14 @@ namespace SteamFriendsManager.Service
                             (from sv in cb.Servers select sv.ToString()).Take(8));
                         await _applicationSettingsService.SaveAsync();
                     });
+
+                    callback.Handle<SteamUser.AccountInfoCallback>(cb =>
+                    {
+                        if (_setPersonalNameTaskCompletionSource != null &&
+                            !_setPersonalNameTaskCompletionSource.Task.IsCompleted)
+                            _setPersonalNameTaskCompletionSource.TrySetResult(cb);
+                        OnPropertyChanged("PersonalName");
+                    });
                 }
             }, _callbackHandlerCancellationTokenSource.Token);
         }
@@ -161,7 +191,6 @@ namespace SteamFriendsManager.Service
         public SteamClient.ConnectedCallback Connect()
         {
             var task = ConnectAsync();
-            task.Wait();
             return task.Result;
         }
 
@@ -193,7 +222,6 @@ namespace SteamFriendsManager.Service
         public SteamUser.LoggedOnCallback Login(SteamUser.LogOnDetails logOnDetails)
         {
             var task = LoginAsync(logOnDetails);
-            task.Wait();
             return task.Result;
         }
 
@@ -211,6 +239,32 @@ namespace SteamFriendsManager.Service
             });
             ThrowIfTimeout(_loginTaskCompletionSource);
             return _loginTaskCompletionSource.Task;
+        }
+
+        public SteamUser.AccountInfoCallback SetPersonalName(string personalName)
+        {
+            var task = SetPersonalNameAsync(personalName);
+            return task.Result;
+        }
+
+        public Task<SteamUser.AccountInfoCallback> SetPersonalNameAsync(string personalName)
+        {
+            _setPersonalNameTaskCompletionSource = new TaskCompletionSource<SteamUser.AccountInfoCallback>();
+            var oldName = PersonalName;
+            Task.Run(() =>
+            {
+                _steamFriends.SetPersonaName(personalName);
+                OnPropertyChanged("PersonalName");
+            });
+            ThrowIfTimeout(_setPersonalNameTaskCompletionSource, () =>
+            {
+                Task.Run(() =>
+                {
+                    _steamFriends.SetPersonaName(oldName);
+                    OnPropertyChanged("PersonalName");
+                });
+            });
+            return _setPersonalNameTaskCompletionSource.Task;
         }
 
         public void Logout()
@@ -241,11 +295,14 @@ namespace SteamFriendsManager.Service
             return _disconnectTaskCompletionSource.Task;
         }
 
-        private void ThrowIfTimeout(object taskCompletionSource)
+        private void ThrowIfTimeout(object taskCompletionSource, Action callback = null)
         {
             var cts = new CancellationTokenSource(DefaultTimeout);
             cts.Token.Register(() =>
             {
+                if (callback != null)
+                    callback.Invoke();
+
                 var task = taskCompletionSource.GetType().GetProperty("Task").GetValue(taskCompletionSource) as Task;
                 var trySetExceptionMethod = taskCompletionSource.GetType()
                     .GetMethod("TrySetException", new[] {typeof (Exception)});

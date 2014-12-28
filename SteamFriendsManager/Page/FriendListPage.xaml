@@ -208,7 +208,8 @@
                     <Label FontFamily="Microsoft YaHei UI">删除好友</Label>
                 </StackPanel>
             </Button>
-            <Button Style="{DynamicResource OperationButtonStyle}" Margin="5, 0" Width="60">
+            <Button Style="{DynamicResource OperationButtonStyle}" Margin="5, 0" Width="60"
+                    Command="{Binding ChangePersonalName, Mode=OneWay}">
                 <StackPanel Margin="0, 5, 0, 0">
                     <Rectangle Width="25" Height="25"
                                Fill="{Binding Foreground, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Button}}}">
@@ -230,6 +231,7 @@
                     <Label FontFamily="Microsoft YaHei UI">切换状态</Label>
                 </StackPanel>
             </Button>
+            <Label Content="{Binding PersonalName, Mode=OneWay}" />
         </StackPanel>
         <ListView Grid.Row="1" ItemsSource="{Binding Friends, Mode=OneWay}" Margin="15, 0, 15, 10"
                   ScrollViewer.HorizontalScrollBarVisibility="Disabled"

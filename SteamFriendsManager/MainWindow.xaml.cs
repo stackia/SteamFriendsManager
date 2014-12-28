@@ -30,7 +30,16 @@ namespace SteamFriendsManager
                 msg =>
                 {
                     DispatcherHelper.CheckBeginInvokeOnUI(
-                        async () => { msg.Execute(await this.ShowInputAsync(msg.Title, msg.Message)); });
+                        async () =>
+                        {
+                            if (msg.DefaultText != null)
+                                msg.Execute(await this.ShowInputAsync(msg.Title, msg.Message, new MetroDialogSettings
+                                {
+                                    DefaultText = msg.DefaultText
+                                }));
+                            else
+                                msg.Execute(await this.ShowInputAsync(msg.Title, msg.Message));
+                        });
                 });
         }
     }
