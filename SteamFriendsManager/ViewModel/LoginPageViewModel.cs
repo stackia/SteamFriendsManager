@@ -15,6 +15,7 @@ namespace SteamFriendsManager.ViewModel
         private string _password;
         private bool _shouldRememberAccount;
         private string _username;
+        private bool _clearPageHistoryOnNextTryLogin;
         private readonly ApplicationSettingsService _applicationSettingsService;
         private readonly SteamClientService _steamClientService;
 
@@ -30,6 +31,11 @@ namespace SteamFriendsManager.ViewModel
                 _username = _applicationSettingsService.Settings.LastUsername;
                 _password = _applicationSettingsService.Settings.LastPassword;
             }
+
+            MessengerInstance.Register<ClearPageHistoryOnNextTryLoginMessage>(this, msg =>
+            {
+                _clearPageHistoryOnNextTryLogin = true;
+            });
         }
 
         public bool ShouldRememberAccount
@@ -115,6 +121,12 @@ namespace SteamFriendsManager.ViewModel
                         {
                             try
                             {
+                                if (_clearPageHistoryOnNextTryLogin)
+                                {
+                                    MessengerInstance.Send(new ClearPageHistoryMessage());
+                                    _clearPageHistoryOnNextTryLogin = false;
+                                }
+
                                 if (_steamClientService.IsConnected)
                                     await _steamClientService.DisconnectAsync();
 

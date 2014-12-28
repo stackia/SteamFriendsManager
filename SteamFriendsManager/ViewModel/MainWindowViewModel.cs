@@ -40,6 +40,16 @@ namespace SteamFriendsManager.ViewModel
                     RaiseSwitchBackCanExecuteChanged();
                 });
             });
+
+            MessengerInstance.Register<ClearPageHistoryMessage>(this, msg =>
+            {
+                DispatcherHelper.CheckBeginInvokeOnUI(() =>
+                {
+                    PageHistory.Clear();
+                    PageHistory.Push(CurrentPage);
+                    RaiseSwitchBackCanExecuteChanged();
+                });
+            });
         }
 
         private Stack PageHistory { get; set; }

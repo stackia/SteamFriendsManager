@@ -149,7 +149,7 @@
             <RowDefinition />
         </Grid.RowDefinitions>
         <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Height="58" Margin="15, 10, 15, 0">
-            <Button Style="{DynamicResource OperationButtonStyle}" Margin="5, 0" Width="60">
+            <Button Style="{DynamicResource OperationButtonStyle}" Margin="5, 0" Width="60" Command="{Binding SwitchAccount, Mode=OneWay}">
                 <StackPanel Margin="0, 7, 0, 0">
                     <Rectangle Width="25" Height="25"
                                Fill="{Binding Foreground, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Button}}}">
@@ -157,7 +157,7 @@
                             <VisualBrush Stretch="Fill" Visual="{StaticResource appbar_door_leave}" />
                         </Rectangle.OpacityMask>
                     </Rectangle>
-                    <Label FontFamily="Microsoft YaHei UI">注销</Label>
+                    <Label FontFamily="Microsoft YaHei UI">切换帐号</Label>
                 </StackPanel>
             </Button>
             <Button Style="{DynamicResource OperationButtonStyle}" Margin="5, 0" Width="60">
