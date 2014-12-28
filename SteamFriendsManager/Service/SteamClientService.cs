@@ -30,7 +30,7 @@ namespace SteamFriendsManager.Service
         {
             _applicationSettingsService = applicationSettingsService;
 
-            DefaultTimeout = TimeSpan.FromMilliseconds(15000);
+            DefaultTimeout = TimeSpan.FromMilliseconds(10000);
             _steamClient = new SteamClient();
             _steamUser = _steamClient.GetHandler<SteamUser>();
             _steamFriends = _steamClient.GetHandler<SteamFriends>();
@@ -299,18 +299,14 @@ namespace SteamFriendsManager.Service
         {
             var cts = new CancellationTokenSource(DefaultTimeout);
             cts.Token.Register(() =>
-            {
-                if (callback != null)
-                    callback.Invoke();
-
-                var task = taskCompletionSource.GetType().GetProperty("Task").GetValue(taskCompletionSource) as Task;
+            {var task = taskCompletionSource.GetType().GetProperty("Task").GetValue(taskCompletionSource) as Task;
                 var trySetExceptionMethod = taskCompletionSource.GetType()
                     .GetMethod("TrySetException", new[] {typeof (Exception)});
-                if (task != null && trySetExceptionMethod != null && !task.IsCompleted)
-                {
-                    trySetExceptionMethod.Invoke(taskCompletionSource,
-                        new object[] {new TimeoutException(taskCompletionSource.GetType().Name)});
-                }
+                if (task == null || trySetExceptionMethod == null || task.IsCompleted) return;
+                if (callback != null)
+                    callback.Invoke();
+                trySetExceptionMethod.Invoke(taskCompletionSource,
+                    new object[] {new TimeoutException(taskCompletionSource.GetType().Name)});
             });
         }
 
