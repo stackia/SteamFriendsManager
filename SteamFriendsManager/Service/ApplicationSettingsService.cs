@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using System.IO.IsolatedStorage;
+using System.Net;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 
@@ -92,6 +93,7 @@ namespace SteamFriendsManager.Service
             public string LastUsername { get; set; }
             public string LastPassword { get; set; }
             public Dictionary<string, byte[]> SentryHashStore { get; set; }
+            public List<string> PreferedCmServers { get; set; }
         }
     }
 }
