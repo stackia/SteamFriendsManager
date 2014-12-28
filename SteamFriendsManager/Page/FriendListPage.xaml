@@ -8,27 +8,206 @@
     x:Class="SteamFriendsManager.Page.FriendListPage"
     mc:Ignorable="d"
     d:DesignHeight="600"
-    d:DesignWidth="800">
+    d:DesignWidth="870">
     <UserControl.Resources>
         <converter:SteamFriendAvatarConverter x:Key="SteamFriendAvatarConverter" />
+        <Style x:Key="FriendListViewItemStyle" TargetType="{x:Type ListViewItem}">
+            <Setter Property="Foreground" Value="{DynamicResource BlackBrush}" />
+            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+            <Setter Property="VerticalContentAlignment" Value="Center" />
+            <Setter Property="MinHeight" Value="25" />
+            <Setter Property="Margin" Value="5" />
+            <Setter Property="BorderBrush" Value="{DynamicResource GrayBrush1}" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type ListViewItem}">
+                        <Border x:Name="Bd" Background="{TemplateBinding Background}" SnapsToDevicePixels="True">
+                            <Grid>
+                                <ContentPresenter x:Name="contentPresenter"
+                                                  ContentTemplate="{TemplateBinding ContentTemplate}"
+                                                  Content="{TemplateBinding Content}"
+                                                  ContentStringFormat="{TemplateBinding ContentStringFormat}"
+                                                  Visibility="Collapsed" />
+                            </Grid>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="GridView.ColumnCollection" Value="{x:Null}">
+                                <Setter Property="Visibility" TargetName="contentPresenter" Value="Visible" />
+                            </Trigger>
+                            <Trigger Property="IsSelected" Value="True">
+                                <Setter Property="BorderBrush" TargetName="Bd" Value="#FF143C65" />
+                                <Setter Property="Background" TargetName="Bd"
+                                        Value="{DynamicResource AccentColorBrush}" />
+                                <Setter Property="Foreground" Value="{DynamicResource AccentSelectedColorBrush}" />
+                            </Trigger>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" TargetName="Bd"
+                                        Value="{DynamicResource AccentColorBrush3}" />
+                            </Trigger>
+                            <MultiTrigger>
+                                <MultiTrigger.Conditions>
+                                    <Condition Property="IsSelected" Value="True" />
+                                    <Condition Property="Selector.IsSelectionActive" Value="True" />
+                                </MultiTrigger.Conditions>
+                                <Setter Property="Background" TargetName="Bd"
+                                        Value="{DynamicResource AccentColorBrush2}" />
+                                <Setter Property="BorderBrush" TargetName="Bd" Value="#FF143C65" />
+                                <Setter Property="Foreground" Value="{DynamicResource AccentSelectedColorBrush}" />
+                            </MultiTrigger>
+                            <MultiTrigger>
+                                <MultiTrigger.Conditions>
+                                    <Condition Property="IsEnabled" Value="False" />
+                                    <Condition Property="IsSelected" Value="True" />
+                                </MultiTrigger.Conditions>
+                                <Setter Property="Background" TargetName="Bd" Value="{DynamicResource GrayBrush7}" />
+                            </MultiTrigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style x:Key="OperationButtonStyle" TargetType="{x:Type Button}">
+            <Setter Property="FocusVisualStyle">
+                <Setter.Value>
+                    <Style>
+                        <Setter>
+                            <Setter.Property>Control.Template</Setter.Property>
+                            <Setter.Value>
+                                <ControlTemplate TargetType="{x:Type Control}">
+                                    <Rectangle Margin="8" SnapsToDevicePixels="True"
+                                               Stroke="{DynamicResource BlackBrush}" StrokeThickness="1"
+                                               StrokeDashArray="2 2" />
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="BorderBrush" Value="{DynamicResource AccentColorBrush}" />
+            <Setter Property="HorizontalContentAlignment" Value="Center" />
+            <Setter Property="VerticalContentAlignment" Value="Center" />
+            <Setter Property="Padding" Value="1" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Button}">
+                        <Grid>
+                            <Rectangle Fill="{TemplateBinding Background}" StrokeThickness="0" />
+                            <Rectangle x:Name="bg" Fill="{DynamicResource BlackBrush}" Opacity="0" StrokeThickness="0" />
+                            <Rectangle x:Name="hoverbg" Fill="{DynamicResource BlackBrush}" Opacity="0"
+                                       StrokeThickness="0" />
+                            <ContentPresenter x:Name="content" ContentTemplate="{TemplateBinding ContentTemplate}"
+                                              Content="{TemplateBinding Content}"
+                                              ContentStringFormat="{TemplateBinding ContentStringFormat}"
+                                              HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                              Margin="{TemplateBinding Padding}" RecognizesAccessKey="True"
+                                              SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
+                                              VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Trigger.EnterActions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <DoubleAnimation Duration="0" From="0" To="0.3"
+                                                             Storyboard.TargetProperty="Opacity"
+                                                             Storyboard.TargetName="bg" />
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </Trigger.EnterActions>
+                                <Trigger.ExitActions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <DoubleAnimation Duration="0:0:0.5" To="0"
+                                                             Storyboard.TargetProperty="Opacity"
+                                                             Storyboard.TargetName="bg" />
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </Trigger.ExitActions>
+                            </Trigger>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Opacity" TargetName="hoverbg" Value="0.1" />
+                            </Trigger>
+                            <Trigger Property="IsMouseOver" Value="False">
+                                <Setter Property="Opacity" TargetName="hoverbg" Value="0" />
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter Property="Foreground" Value="{DynamicResource GrayBrush7}" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
     </UserControl.Resources>
     <UserControl.DataContext>
         <Binding Mode="OneTime" Path="FriendListPage" Source="{StaticResource Locator}" />
     </UserControl.DataContext>
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="34" />
+            <RowDefinition Height="72" />
             <RowDefinition />
         </Grid.RowDefinitions>
-        <StackPanel Orientation="Horizontal">
-            <Button Content="添加好友" />
-            <Button Content="聊天" />
-            <Button Content="删除好友" />
-            <Button Content="修改昵称" />
-            <Button Content="切换状态" />
+        <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Height="58" Margin="15, 10, 15, 0">
+            <Button Style="{DynamicResource OperationButtonStyle}" Margin="5, 0" Width="60">
+                <StackPanel Margin="0, 7, 0, 0">
+                    <Rectangle Width="25" Height="25"
+                               Fill="{Binding Foreground, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Button}}}">
+                        <Rectangle.OpacityMask>
+                            <VisualBrush Stretch="Fill" Visual="{StaticResource appbar_door_leave}" />
+                        </Rectangle.OpacityMask>
+                    </Rectangle>
+                    <Label FontFamily="Microsoft YaHei UI">注销</Label>
+                </StackPanel>
+            </Button>
+            <Button Style="{DynamicResource OperationButtonStyle}" Margin="5, 0" Width="60">
+                <StackPanel Margin="0, 5, 0, 0">
+                    <Rectangle Width="25" Height="25"
+                               Fill="{Binding Foreground, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Button}}}">
+                        <Rectangle.OpacityMask>
+                            <VisualBrush Stretch="Fill" Visual="{StaticResource appbar_chat}" />
+                        </Rectangle.OpacityMask>
+                    </Rectangle>
+                    <Label FontFamily="Microsoft YaHei UI">聊天</Label>
+                </StackPanel>
+            </Button>
+            <Button Style="{DynamicResource OperationButtonStyle}" Margin="5, 0" Width="60">
+                <StackPanel Margin="0, 5, 0, 0">
+                    <Rectangle Width="25" Height="25"
+                               Fill="{Binding Foreground, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Button}}}">
+                        <Rectangle.OpacityMask>
+                            <VisualBrush Stretch="Fill" Visual="{StaticResource appbar_user_delete}" />
+                        </Rectangle.OpacityMask>
+                    </Rectangle>
+                    <Label FontFamily="Microsoft YaHei UI">删除好友</Label>
+                </StackPanel>
+            </Button>
+            <Button Style="{DynamicResource OperationButtonStyle}" Margin="5, 0" Width="60">
+                <StackPanel Margin="0, 5, 0, 0">
+                    <Rectangle Width="25" Height="25"
+                               Fill="{Binding Foreground, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Button}}}">
+                        <Rectangle.OpacityMask>
+                            <VisualBrush Stretch="Fill" Visual="{StaticResource appbar_page_edit}" />
+                        </Rectangle.OpacityMask>
+                    </Rectangle>
+                    <Label FontFamily="Microsoft YaHei UI">修改昵称</Label>
+                </StackPanel>
+            </Button>
+            <Button Style="{DynamicResource OperationButtonStyle}" Margin="5, 0" Width="60">
+                <StackPanel Margin="0, 5, 0, 0">
+                    <Rectangle Width="25" Height="25"
+                               Fill="{Binding Foreground, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Button}}}">
+                        <Rectangle.OpacityMask>
+                            <VisualBrush Stretch="Fill" Visual="{StaticResource appbar_people_status}" />
+                        </Rectangle.OpacityMask>
+                    </Rectangle>
+                    <Label FontFamily="Microsoft YaHei UI">切换状态</Label>
+                </StackPanel>
+            </Button>
         </StackPanel>
-        <ListView Grid.Row="1" ItemsSource="{Binding Friends, Mode=OneWay}"
-                  ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+        <ListView Grid.Row="1" ItemsSource="{Binding Friends, Mode=OneWay}" Margin="15, 0, 15, 10"
+                  ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                  ItemContainerStyle="{DynamicResource FriendListViewItemStyle}" BorderThickness="0">
             <ListView.ItemsPanel>
                 <ItemsPanelTemplate>
                     <WrapPanel IsItemsHost="True" />
@@ -36,21 +215,16 @@
             </ListView.ItemsPanel>
             <ListView.ItemTemplate>
                 <DataTemplate>
-                    <Grid Height="104" Width="418">
-                        <Grid.RowDefinitions>
-                            <RowDefinition />
-                            <RowDefinition />
-                            <RowDefinition />
-                        </Grid.RowDefinitions>
+                    <Grid Height="50" Width="265">
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="104" />
+                            <ColumnDefinition Width="50" />
                             <ColumnDefinition />
                         </Grid.ColumnDefinitions>
-                        <utils:Image Grid.RowSpan="3" Margin="8" Stretch="UniformToFill"
-                                     ImageUrl="{Binding Avatar, Mode=OneWay, Converter={StaticResource SteamFriendAvatarConverter}, IsAsync=True}" />
-                        <Label Grid.Column="1" Grid.Row="0" Content="{Binding PersonalName}" />
-                        <Label Grid.Column="1" Grid.Row="1" Content="{Binding PersonaState}" />
-                        <Label Grid.Column="1" Grid.Row="2" Content="{Binding GamePlayedName}" />
+                        <utils:Image Margin="3" Stretch="UniformToFill"
+                                     ImageUrl="{Binding Avatar, Mode=OneWay, Converter={StaticResource SteamFriendAvatarConverter}}" />
+                        <Label Grid.Column="1" Grid.Row="0" Content="{Binding PersonalName, Mode=OneWay}"
+                               FontFamily="Microsoft YaHei UI" VerticalAlignment="Center" FontSize="16"
+                               ToolTip="{Binding PersonalName, Mode=OneWay}" />
                     </Grid>
                 </DataTemplate>
             </ListView.ItemTemplate>

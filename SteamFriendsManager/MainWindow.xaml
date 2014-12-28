@@ -11,7 +11,7 @@
     x:Class="SteamFriendsManager.MainWindow"
     Title="Steam 好友管理器"
     Icon="Logo.ico"
-    MinWidth="800"
+    MinWidth="870"
     MinHeight="600"
     GlowBrush="{DynamicResource AccentColorBrush}"
     DataContext="{Binding Path=MainWindow, Mode=OneTime, Source={StaticResource Locator}}">

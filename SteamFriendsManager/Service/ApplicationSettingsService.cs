@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using System.IO.IsolatedStorage;
-using System.Net;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 

@@ -7,7 +7,6 @@ using System.Linq;
 using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Windows.Annotations;
 using SteamKit2;
 
 namespace SteamFriendsManager.Service
@@ -131,7 +130,8 @@ namespace SteamFriendsManager.Service
                         if (_applicationSettingsService.Settings.PreferedCmServers == null)
                             _applicationSettingsService.Settings.PreferedCmServers = new List<string>();
                         _applicationSettingsService.Settings.PreferedCmServers.Clear();
-                        _applicationSettingsService.Settings.PreferedCmServers.AddRange((from sv in cb.Servers select sv.ToString()).Take(8));
+                        _applicationSettingsService.Settings.PreferedCmServers.AddRange(
+                            (from sv in cb.Servers select sv.ToString()).Take(8));
                         await _applicationSettingsService.SaveAsync();
                     });
                 }
@@ -180,12 +180,11 @@ namespace SteamFriendsManager.Service
                         _applicationSettingsService.Settings.PreferedCmServers[
                             new Random().Next(0, _applicationSettingsService.Settings.PreferedCmServers.Count)];
 
-                    string[] ep = cmServer.Split(':');
-                    IPAddress ip = IPAddress.Parse(ep.Length > 2 ? string.Join(":", ep, 0, ep.Length - 1) : ep[0]);
-                    int port = int.Parse(ep[ep.Length - 1], NumberStyles.None, NumberFormatInfo.CurrentInfo);
+                    var ep = cmServer.Split(':');
+                    var ip = IPAddress.Parse(ep.Length > 2 ? string.Join(":", ep, 0, ep.Length - 1) : ep[0]);
+                    var port = int.Parse(ep[ep.Length - 1], NumberStyles.None, NumberFormatInfo.CurrentInfo);
                     _steamClient.Connect(new IPEndPoint(ip, port));
                 }
-
             });
             ThrowIfTimeout(_connectTaskCompletionSource);
             return _connectTaskCompletionSource.Task;
