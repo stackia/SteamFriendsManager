@@ -146,6 +146,66 @@
         <Binding Mode="OneTime" Path="FriendListPage" Source="{StaticResource Locator}" />
     </UserControl.DataContext>
     <Grid>
+        <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup x:Name="SelectionVisualStateGroup">
+                <VisualState x:Name="SelectedOne" />
+                <VisualState x:Name="SelectedMany">
+                    <Storyboard>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(ContentControl.Content)"
+                                                       Storyboard.TargetName="SendMessageButtonText">
+                            <DiscreteObjectKeyFrame KeyTime="0" Value="群发消息" />
+                        </ObjectAnimationUsingKeyFrames>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)"
+                                                       Storyboard.TargetName="DeleteFriendButtonIcon">
+                            <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Collapsed}" />
+                        </ObjectAnimationUsingKeyFrames>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)"
+                                                       Storyboard.TargetName="DeleteFriendsButtonIcon">
+                            <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Visible}" />
+                        </ObjectAnimationUsingKeyFrames>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)"
+                                                       Storyboard.TargetName="SendMessageButtonIcon">
+                            <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Collapsed}" />
+                        </ObjectAnimationUsingKeyFrames>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)"
+                                                       Storyboard.TargetName="SendMessagesButtonIcon">
+                            <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Visible}" />
+                        </ObjectAnimationUsingKeyFrames>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(ContentControl.Content)"
+                                                       Storyboard.TargetName="DeleteFriendButtonText">
+                            <DiscreteObjectKeyFrame KeyTime="0" Value="批量删除" />
+                        </ObjectAnimationUsingKeyFrames>
+                    </Storyboard>
+                </VisualState>
+                <VisualState x:Name="SelectedNone">
+                    <Storyboard>
+                        <BooleanAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.IsEnabled)"
+                                                        Storyboard.TargetName="SendMessageButton">
+                            <DiscreteBooleanKeyFrame KeyTime="0" Value="False" />
+                        </BooleanAnimationUsingKeyFrames>
+                        <BooleanAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.IsEnabled)"
+                                                        Storyboard.TargetName="DeleteFriendButton">
+                            <DiscreteBooleanKeyFrame KeyTime="0" Value="False" />
+                        </BooleanAnimationUsingKeyFrames>
+                    </Storyboard>
+                </VisualState>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
+        <i:Interaction.Triggers>
+            <ei:DataTrigger Binding="{Binding SelectedItems.Count, ElementName=FriendListView, Mode=OneWay}" Value="0">
+                <ei:GoToStateAction StateName="SelectedNone" />
+            </ei:DataTrigger>
+            <ei:DataTrigger Binding="{Binding SelectedItems.Count, ElementName=FriendListView, Mode=OneWay}" Value="1">
+                <ei:GoToStateAction StateName="SelectedOne" />
+            </ei:DataTrigger>
+            <ei:DataTrigger Binding="{Binding SelectedItems.Count, ElementName=FriendListView, Mode=OneWay}" Value="1"
+                            Comparison="GreaterThan">
+                <ei:GoToStateAction StateName="SelectedMany" />
+            </ei:DataTrigger>
+            <i:EventTrigger>
+                <ei:GoToStateAction StateName="SelectedNone" />
+            </i:EventTrigger>
+        </i:Interaction.Triggers>
         <Grid.RowDefinitions>
             <RowDefinition Height="72" />
             <RowDefinition />
@@ -175,15 +235,51 @@
                     <Label FontFamily="Microsoft YaHei UI">刷新列表</Label>
                 </StackPanel>
             </Button>
-            <Button Style="{DynamicResource OperationButtonStyle}" Margin="5, 0" Width="60">
+            <Button x:Name="SendMessageButton" Style="{DynamicResource OperationButtonStyle}" Margin="5, 0" Width="60">
                 <StackPanel Margin="0, 5, 0, 0">
-                    <Rectangle Width="25" Height="25"
+                    <Rectangle Width="25" Height="25" x:Name="SendMessageButtonIcon"
                                Fill="{Binding Foreground, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Button}}}">
                         <Rectangle.OpacityMask>
                             <VisualBrush Stretch="Fill" Visual="{StaticResource appbar_message_send}" />
                         </Rectangle.OpacityMask>
                     </Rectangle>
-                    <Label FontFamily="Microsoft YaHei UI">发送消息</Label>
+                    <Rectangle Width="30" Height="25" x:Name="SendMessagesButtonIcon"
+                               Fill="{Binding Foreground, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Button}}}"
+                               Visibility="Collapsed">
+                        <Rectangle.OpacityMask>
+                            <VisualBrush Stretch="Fill">
+                                <VisualBrush.Visual>
+                                    <Canvas Height="25" Width="25">
+                                        <Rectangle Width="25" Height="25"
+                                                   Fill="{Binding Foreground, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Button}}}"
+                                                   Canvas.Top="23">
+                                            <Rectangle.OpacityMask>
+                                                <VisualBrush Stretch="Fill"
+                                                             Visual="{StaticResource appbar_message_send}" />
+                                            </Rectangle.OpacityMask>
+                                        </Rectangle>
+                                        <Rectangle Width="25" Height="25"
+                                                   Fill="{Binding Foreground, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Button}}}"
+                                                   Canvas.Left="13">
+                                            <Rectangle.OpacityMask>
+                                                <VisualBrush Stretch="Fill"
+                                                             Visual="{StaticResource appbar_message_send}" />
+                                            </Rectangle.OpacityMask>
+                                        </Rectangle>
+                                        <Rectangle Width="25" Height="25"
+                                                   Fill="{Binding Foreground, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Button}}}"
+                                                   Canvas.Left="28" Canvas.Top="23">
+                                            <Rectangle.OpacityMask>
+                                                <VisualBrush Stretch="Fill"
+                                                             Visual="{StaticResource appbar_message_send}" />
+                                            </Rectangle.OpacityMask>
+                                        </Rectangle>
+                                    </Canvas>
+                                </VisualBrush.Visual>
+                            </VisualBrush>
+                        </Rectangle.OpacityMask>
+                    </Rectangle>
+                    <Label x:Name="SendMessageButtonText" FontFamily="Microsoft YaHei UI">发送消息</Label>
                 </StackPanel>
             </Button>
             <Button Style="{DynamicResource OperationButtonStyle}" Margin="5, 0" Width="60">
@@ -197,15 +293,21 @@
                     <Label FontFamily="Microsoft YaHei UI">添加好友</Label>
                 </StackPanel>
             </Button>
-            <Button Style="{DynamicResource OperationButtonStyle}" Margin="5, 0" Width="60">
+            <Button x:Name="DeleteFriendButton" Style="{DynamicResource OperationButtonStyle}" Margin="5, 0" Width="60">
                 <StackPanel Margin="0, 5, 0, 0">
-                    <Rectangle Width="25" Height="25"
+                    <Rectangle x:Name="DeleteFriendButtonIcon" Width="25" Height="25"
                                Fill="{Binding Foreground, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Button}}}">
                         <Rectangle.OpacityMask>
                             <VisualBrush Stretch="Fill" Visual="{StaticResource appbar_user_delete}" />
                         </Rectangle.OpacityMask>
                     </Rectangle>
-                    <Label FontFamily="Microsoft YaHei UI">删除好友</Label>
+                    <Rectangle x:Name="DeleteFriendsButtonIcon" Visibility="Collapsed" Width="25" Height="25"
+                               Fill="{Binding Foreground, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Button}}}">
+                        <Rectangle.OpacityMask>
+                            <VisualBrush Stretch="Fill" Visual="{StaticResource appbar_group_delete}" />
+                        </Rectangle.OpacityMask>
+                    </Rectangle>
+                    <Label x:Name="DeleteFriendButtonText" FontFamily="Microsoft YaHei UI">删除好友</Label>
                 </StackPanel>
             </Button>
             <Button Style="{DynamicResource OperationButtonStyle}" Margin="5, 0" Width="60"
@@ -233,7 +335,8 @@
             </Button>
             <Label Content="{Binding PersonalName, Mode=OneWay}" />
         </StackPanel>
-        <ListView Grid.Row="1" ItemsSource="{Binding Friends, Mode=OneWay}" Margin="15, 0, 15, 10"
+        <ListView x:Name="FriendListView" Grid.Row="1" ItemsSource="{Binding Friends, Mode=OneWay}"
+                  Margin="15, 0, 15, 10"
                   ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                   ItemContainerStyle="{DynamicResource FriendListViewItemStyle}" BorderThickness="0">
             <ListView.ItemsPanel>
