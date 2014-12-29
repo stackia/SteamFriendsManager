@@ -299,7 +299,8 @@ namespace SteamFriendsManager.Service
         {
             var cts = new CancellationTokenSource(DefaultTimeout);
             cts.Token.Register(() =>
-            {var task = taskCompletionSource.GetType().GetProperty("Task").GetValue(taskCompletionSource) as Task;
+            {
+                var task = taskCompletionSource.GetType().GetProperty("Task").GetValue(taskCompletionSource) as Task;
                 var trySetExceptionMethod = taskCompletionSource.GetType()
                     .GetMethod("TrySetException", new[] {typeof (Exception)});
                 if (task == null || trySetExceptionMethod == null || task.IsCompleted) return;

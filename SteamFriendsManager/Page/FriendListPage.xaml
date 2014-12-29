@@ -45,6 +45,7 @@
                             <Trigger Property="IsMouseOver" Value="True">
                                 <Setter Property="Background" TargetName="Bd"
                                         Value="{DynamicResource AccentColorBrush3}" />
+                                <Setter Property="utils:DragSelectionHelper.IsDragSelecting" Value="True" />
                             </Trigger>
                             <MultiTrigger>
                                 <MultiTrigger.Conditions>
@@ -336,7 +337,7 @@
             <Label Content="{Binding PersonalName, Mode=OneWay}" />
         </StackPanel>
         <ListView x:Name="FriendListView" Grid.Row="1" ItemsSource="{Binding Friends, Mode=OneWay}"
-                  Margin="15, 0, 15, 10"
+                  Margin="15, 0, 15, 10" utils:DragSelectionHelper.IsDragSelectionEnabled="True"
                   ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                   ItemContainerStyle="{DynamicResource FriendListViewItemStyle}" BorderThickness="0">
             <ListView.ItemsPanel>
