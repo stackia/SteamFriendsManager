@@ -110,4 +110,8 @@ namespace SteamFriendsManager
         public string Title { get; set; }
         public string Message { get; set; }
     }
+
+    internal class PersonalNameChangedMessage : MessageBase
+    {
+    }
 }
