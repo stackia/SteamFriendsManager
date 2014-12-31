@@ -1,6 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
-using System.IO.IsolatedStorage;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 
@@ -19,12 +19,11 @@ namespace SteamFriendsManager.Service
 
         public void Save()
         {
-            var storage = IsolatedStorageFile.GetUserStoreForApplication();
-            IsolatedStorageFileStream settingsFileStream = null;
+            FileStream settingsFileStream = null;
             try
             {
-                settingsFileStream = new IsolatedStorageFileStream(SettingsFileName, FileMode.OpenOrCreate,
-                    FileAccess.ReadWrite, storage);
+                settingsFileStream = File.Open(Path.Combine(Environment.CurrentDirectory, SettingsFileName),
+                    FileMode.OpenOrCreate, FileAccess.Write);
                 using (var streamWriter = new StreamWriter(settingsFileStream))
                 {
                     settingsFileStream = null;
@@ -47,13 +46,11 @@ namespace SteamFriendsManager.Service
 
         public void Load()
         {
-            var storage = IsolatedStorageFile.GetUserStoreForApplication();
-
-            IsolatedStorageFileStream settingsFileStream = null;
+            FileStream settingsFileStream = null;
             try
             {
-                settingsFileStream = new IsolatedStorageFileStream(SettingsFileName, FileMode.OpenOrCreate,
-                    FileAccess.ReadWrite, storage);
+                settingsFileStream = File.Open(Path.Combine(Environment.CurrentDirectory, SettingsFileName),
+                    FileMode.OpenOrCreate, FileAccess.Read);
                 StreamReader streamReader = null;
                 try
                 {
