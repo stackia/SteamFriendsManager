@@ -138,7 +138,7 @@ namespace SteamFriendsManager.ViewModel
                                 {
                                     await _steamClientService.DisconnectAsync();
                                     await Task.Delay(1000);
-                                        // It may fail to connect if we immediately reconnect after disconnected
+                                    // It may fail to connect if we immediately reconnect after disconnected
                                 }
 
                                 await _steamClientService.ConnectAsync();
@@ -201,7 +201,6 @@ namespace SteamFriendsManager.ViewModel
 
                                 if (success)
                                 {
-                                    await _steamClientService.SetPersonaStateAsync(EPersonaState.Online);
                                     _applicationSettingsService.Settings.ShouldRememberAccount =
                                         ShouldRememberAccount;
                                     if (ShouldRememberAccount)

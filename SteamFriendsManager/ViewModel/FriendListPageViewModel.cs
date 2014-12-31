@@ -17,6 +17,7 @@ namespace SteamFriendsManager.ViewModel
     {
         private RelayCommand _changePersonaName;
         private RelayCommand<IList> _removeFriend;
+        private string _searchText;
         private RelayCommand<IList> _sendChatMessage;
         private RelayCommand _switchAccount;
         private RelayCommand<EPersonaState> _switchPersonaState;
@@ -25,6 +26,8 @@ namespace SteamFriendsManager.ViewModel
         public FriendListPageViewModel(SteamClientService steamClientService)
         {
             _steamClientService = steamClientService;
+
+            Task.Delay(2000).ContinueWith(task => { _steamClientService.SetPersonaStateAsync(EPersonaState.Online); });
 
             MessengerInstance.Register<PersonaNameChangedMessage>(this,
                 msg => { RaisePropertyChanged(() => PersonaName); });
@@ -43,9 +46,66 @@ namespace SteamFriendsManager.ViewModel
             get { return _steamClientService.PersonaName; }
         }
 
-        public EPersonaState PersonaState
+        public string PersonaState
         {
-            get { return _steamClientService.PersonaState; }
+            get
+            {
+                var state = _steamClientService.PersonaState;
+                switch (state)
+                {
+                    case EPersonaState.Offline:
+                        return "离线";
+
+                    case EPersonaState.Online:
+                        return "在线";
+
+                    case EPersonaState.Busy:
+                        return "忙碌";
+
+                    case EPersonaState.Away:
+                        return "离开";
+
+                    case EPersonaState.Snooze:
+                        return "打盹";
+
+                    case EPersonaState.LookingToTrade:
+                        return "想交易";
+
+                    case EPersonaState.LookingToPlay:
+                        return "想玩游戏";
+
+                    default:
+                        return state.ToString();
+                }
+            }
+        }
+
+        public string SearchText
+        {
+            get { return _searchText; }
+            set
+            {
+                if (_searchText == value)
+                    return;
+
+                _searchText = value;
+                RaisePropertyChanged(() => SearchText);
+
+                if (!string.IsNullOrEmpty(_searchText))
+                {
+                    foreach (var friend in _steamClientService.Friends)
+                    {
+                        friend.Show = friend.PersonaName.ToLower().Contains(_searchText.ToLower());
+                    }
+                }
+                else
+                {
+                    foreach (var friend in _steamClientService.Friends)
+                    {
+                        friend.Show = true;
+                    }
+                }
+            }
         }
 
         public RelayCommand SwitchAccount

@@ -5,6 +5,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
     xmlns:ei="http://schemas.microsoft.com/expression/2010/interactions"
+    xmlns:metro="http://metro.mahapps.com/winfx/xaml/controls"
     xmlns:utils="clr-namespace:SteamFriendsManager.Utility"
     x:Class="SteamFriendsManager.Page.FriendListPage"
     mc:Ignorable="d"
@@ -145,6 +146,10 @@
         <Binding Mode="OneTime" Path="FriendListPage" Source="{StaticResource Locator}" />
     </UserControl.DataContext>
     <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="469*" />
+            <ColumnDefinition Width="401*" />
+        </Grid.ColumnDefinitions>
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup x:Name="SelectionVisualStateGroup">
                 <VisualState x:Name="SelectedOne" />
@@ -209,7 +214,7 @@
             <RowDefinition Height="72" />
             <RowDefinition />
         </Grid.RowDefinitions>
-        <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Height="58" Margin="15, 10, 15, 0">
+        <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Height="58" Margin="15,12,8,2">
             <Button Style="{DynamicResource OperationButtonStyle}" Margin="5, 0" Width="60"
                     Command="{Binding SwitchAccount, Mode=OneWay}">
                 <StackPanel Margin="0, 7, 0, 0">
@@ -357,13 +362,44 @@
                     <Label FontFamily="Microsoft YaHei UI">切换状态</Label>
                 </StackPanel>
             </Button>
-            <Label Content="{Binding PersonaName, Mode=OneWay}" />
-            <Label Content="{Binding PersonaState, Mode=OneWay}" />
+
         </StackPanel>
-        <ListView x:Name="FriendListView" Grid.Row="1" ItemsSource="{Binding Friends, Mode=OneWay}"
+        <Grid Margin="7,0,15,2" Grid.Row="0" Grid.Column="1">
+            <Grid.RowDefinitions>
+                <RowDefinition />
+                <RowDefinition />
+            </Grid.RowDefinitions>
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center"
+                        Margin="0,4,0,0">
+                <Label Content="{Binding PersonaName, Mode=OneWay}" FontSize="14" />
+                <Label Content="{Binding PersonaState, Mode=OneWay}" FontSize="14" />
+            </StackPanel>
+            <TextBox Grid.Row="1" VerticalAlignment="Center" HorizontalAlignment="Right" Width="284"
+                     FontFamily="Microsoft YaHei"
+                     metro:TextBoxHelper.Watermark="搜索..."
+                     metro:TextBoxHelper.ClearTextButton="True"
+                     Text="{Binding SearchText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                <TextBox.Style>
+                    <!-- ReSharper disable once Xaml.StaticResourceNotResolved -->
+                    <Style TargetType="{x:Type TextBox}"
+                           BasedOn="{StaticResource SearchMetroTextBox}">
+                        <Style.Triggers>
+                            <Trigger Property="metro:TextBoxHelper.HasText"
+                                     Value="True">
+                                <Setter Property="metro:TextBoxHelper.ButtonTemplate"
+                                        Value="{DynamicResource ChromelessButtonTemplate}" />
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </TextBox.Style>
+            </TextBox>
+        </Grid>
+        <ListView x:Name="FriendListView" Grid.Row="1" ItemsSource="{Binding Friends, Mode=OneWay, IsAsync=True}"
                   Margin="15, 0, 15, 10" utils:DragSelectionHelper.IsDragSelectionEnabled="True"
                   ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-                  ItemContainerStyle="{DynamicResource FriendListViewItemStyle}" BorderThickness="0">
+                  ItemContainerStyle="{DynamicResource FriendListViewItemStyle}" BorderThickness="0"
+                  Grid.ColumnSpan="2"
+                  Grid.Column="0">
             <ListView.ItemsPanel>
                 <ItemsPanelTemplate>
                     <WrapPanel IsItemsHost="True" />
@@ -371,7 +407,8 @@
             </ListView.ItemsPanel>
             <ListView.ItemTemplate>
                 <DataTemplate>
-                    <Grid Height="50" Width="265">
+                    <Grid Height="50" Width="265"
+                          Opacity="{Binding Show, Converter={StaticResource BooleanToOpacityConverter}}">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="50" />
                             <ColumnDefinition />

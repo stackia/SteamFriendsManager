@@ -407,12 +407,14 @@ namespace SteamFriendsManager.Service
 
         public class Friend : INotifyPropertyChanged
         {
+            private bool _show;
             private readonly SteamFriends _steamFriends;
 
             public Friend(SteamID steamId, SteamFriends steamFriends)
             {
                 SteamId = steamId;
                 _steamFriends = steamFriends;
+                Show = true;
             }
 
             public SteamID SteamId { get; private set; }
@@ -447,6 +449,19 @@ namespace SteamFriendsManager.Service
                 get { return _steamFriends.GetFriendRelationship(SteamId); }
             }
 
+            public bool Show
+            {
+                get { return _show; }
+                set
+                {
+                    if (_show == value)
+                        return;
+
+                    _show = value;
+                    OnPropertyChanged("Show");
+                }
+            }
+
             public event PropertyChangedEventHandler PropertyChanged;
 
             private void OnPropertyChanged(string propertyName = null)
@@ -463,6 +478,7 @@ namespace SteamFriendsManager.Service
                 OnPropertyChanged("PersonaName");
                 OnPropertyChanged("PersonaState");
                 OnPropertyChanged("Relationship");
+                OnPropertyChanged("Show");
             }
 
             public override bool Equals(object obj)
