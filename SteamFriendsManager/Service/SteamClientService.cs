@@ -1,17 +1,19 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Globalization;
 using System.Linq;
 using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
+using GalaSoft.MvvmLight.Messaging;
+using GalaSoft.MvvmLight.Threading;
 using SteamKit2;
 
 namespace SteamFriendsManager.Service
 {
-    public class SteamClientService : IDisposable, INotifyPropertyChanged
+    public class SteamClientService : IDisposable
     {
         private CancellationTokenSource _callbackHandlerCancellationTokenSource;
         private TaskCompletionSource<SteamClient.ConnectedCallback> _connectTaskCompletionSource;
@@ -34,7 +36,7 @@ namespace SteamFriendsManager.Service
             _steamClient = new SteamClient();
             _steamUser = _steamClient.GetHandler<SteamUser>();
             _steamFriends = _steamClient.GetHandler<SteamFriends>();
-            Friends = new FriendList(_steamFriends);
+            Friends = new ObservableCollection<Friend>();
         }
 
         public TimeSpan DefaultTimeout { get; set; }
@@ -44,7 +46,7 @@ namespace SteamFriendsManager.Service
             get { return _steamClient.IsConnected; }
         }
 
-        public FriendList Friends { get; private set; }
+        public ObservableCollection<Friend> Friends { get; private set; }
 
         public string PersonalName
         {
@@ -62,14 +64,6 @@ namespace SteamFriendsManager.Service
         {
             Dispose(true);
             GC.SuppressFinalize(this);
-        }
-
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        private void OnPropertyChanged(string propertyName)
-        {
-            var handler = PropertyChanged;
-            if (handler != null) handler(this, new PropertyChangedEventArgs(propertyName));
         }
 
         private void Dispose(bool disposing)
@@ -140,11 +134,12 @@ namespace SteamFriendsManager.Service
                     {
                         var query = from f in Friends where f.SteamId.Equals(cb.FriendID) select f;
                         var friends = query as Friend[] ?? query.ToArray();
-                        if (friends.Any())
-                        {
-                            var friend = friends.First();
-                            friend.OnStateChanged();
-                        }
+
+                        if (!friends.Any())
+                            return;
+
+                        var friend = friends.First();
+                        friend.OnStateChanged();
                     });
 
                     callback.Handle<SteamClient.CMListCallback>(async cb =>
@@ -162,7 +157,33 @@ namespace SteamFriendsManager.Service
                         if (_setPersonalNameTaskCompletionSource != null &&
                             !_setPersonalNameTaskCompletionSource.Task.IsCompleted)
                             _setPersonalNameTaskCompletionSource.TrySetResult(cb);
-                        OnPropertyChanged("PersonalName");
+                        Messenger.Default.Send(new PersonalNameChangedMessage());
+                    });
+
+                    callback.Handle<SteamFriends.FriendsListCallback>(cb =>
+                    {
+                        DispatcherHelper.CheckBeginInvokeOnUI(() =>
+                        {
+                            if (!cb.Incremental)
+                            {
+                                Friends.Clear();
+                            }
+
+                            foreach (var friend in from friendRaw in cb.FriendList
+                                where friendRaw.SteamID.IsIndividualAccount
+                                select new Friend(friendRaw.SteamID, _steamFriends))
+                            {
+                                if (Friends.Contains(friend))
+                                {
+                                    if (friend.Relationship == EFriendRelationship.None)
+                                        Friends.Remove(friend);
+                                }
+                                else
+                                {
+                                    Friends.Add(friend);
+                                }
+                            }
+                        });
                     });
                 }
             }, _callbackHandlerCancellationTokenSource.Token);
@@ -190,8 +211,7 @@ namespace SteamFriendsManager.Service
 
         public SteamClient.ConnectedCallback Connect()
         {
-            var task = ConnectAsync();
-            return task.Result;
+            return ConnectAsync().Result;
         }
 
         public Task<SteamClient.ConnectedCallback> ConnectAsync()
@@ -221,8 +241,7 @@ namespace SteamFriendsManager.Service
 
         public SteamUser.LoggedOnCallback Login(SteamUser.LogOnDetails logOnDetails)
         {
-            var task = LoginAsync(logOnDetails);
-            return task.Result;
+            return LoginAsync(logOnDetails).Result;
         }
 
         public Task<SteamUser.LoggedOnCallback> LoginAsync(SteamUser.LogOnDetails logOnDetails)
@@ -243,8 +262,7 @@ namespace SteamFriendsManager.Service
 
         public SteamUser.AccountInfoCallback SetPersonalName(string personalName)
         {
-            var task = SetPersonalNameAsync(personalName);
-            return task.Result;
+            return SetPersonalNameAsync(personalName).Result;
         }
 
         public Task<SteamUser.AccountInfoCallback> SetPersonalNameAsync(string personalName)
@@ -254,23 +272,58 @@ namespace SteamFriendsManager.Service
             Task.Run(() =>
             {
                 _steamFriends.SetPersonaName(personalName);
-                OnPropertyChanged("PersonalName");
+                Messenger.Default.Send(new PersonalNameChangedMessage());
             });
             ThrowIfTimeout(_setPersonalNameTaskCompletionSource, () =>
             {
                 Task.Run(() =>
                 {
                     _steamFriends.SetPersonaName(oldName);
-                    OnPropertyChanged("PersonalName");
+                    Messenger.Default.Send(new PersonalNameChangedMessage());
                 });
             });
             return _setPersonalNameTaskCompletionSource.Task;
         }
 
+        public void SendChatMessage(SteamID target, EChatEntryType type, string message)
+        {
+            _steamFriends.SendChatMessage(target, type, message);
+        }
+
+        public Task SendChatMessageAsync(SteamID target, EChatEntryType type, string message)
+        {
+            var taskCompletionSource = new TaskCompletionSource<bool>();
+            Task.Run(() =>
+            {
+                SendChatMessage(target, type, message);
+                if (!taskCompletionSource.Task.IsCompleted)
+                    taskCompletionSource.TrySetResult(true);
+            });
+            ThrowIfTimeout(taskCompletionSource);
+            return taskCompletionSource.Task;
+        }
+
+        public void RemoveFriend(SteamID target)
+        {
+            _steamFriends.RemoveFriend(target);
+        }
+
+        public Task RemoveFriendAsync(SteamID target)
+        {
+            var taskCompletionSource = new TaskCompletionSource<bool>();
+            Task.Run(() =>
+            {
+                RemoveFriend(target);
+                if (!taskCompletionSource.Task.IsCompleted)
+                    taskCompletionSource.TrySetResult(true);
+            });
+            ThrowIfTimeout(taskCompletionSource);
+            return taskCompletionSource.Task;
+        }
+
         public void Logout()
         {
-            var task = LogoutAsync();
-            task.Wait();
+            LogoutAsync().Wait();
         }
 
         public Task LogoutAsync()
@@ -283,8 +336,7 @@ namespace SteamFriendsManager.Service
 
         public void Disconnect()
         {
-            var task = DisconnectAsync();
-            task.Wait();
+            DisconnectAsync().Wait();
         }
 
         public Task DisconnectAsync()
@@ -295,7 +347,7 @@ namespace SteamFriendsManager.Service
             return _disconnectTaskCompletionSource.Task;
         }
 
-        private void ThrowIfTimeout(object taskCompletionSource, Action callback = null)
+        private void ThrowIfTimeout(object taskCompletionSource, Action timeoutAction = null)
         {
             var cts = new CancellationTokenSource(DefaultTimeout);
             cts.Token.Register(() =>
@@ -304,8 +356,8 @@ namespace SteamFriendsManager.Service
                 var trySetExceptionMethod = taskCompletionSource.GetType()
                     .GetMethod("TrySetException", new[] {typeof (Exception)});
                 if (task == null || trySetExceptionMethod == null || task.IsCompleted) return;
-                if (callback != null)
-                    callback.Invoke();
+                if (timeoutAction != null)
+                    timeoutAction.Invoke();
                 trySetExceptionMethod.Invoke(taskCompletionSource,
                     new object[] {new TimeoutException(taskCompletionSource.GetType().Name)});
             });
@@ -370,48 +422,46 @@ namespace SteamFriendsManager.Service
                 OnPropertyChanged("PersonaState");
                 OnPropertyChanged("Relationship");
             }
-        }
 
-        public class FriendList : IReadOnlyList<Friend>
-        {
-            private readonly Dictionary<SteamID, Friend> _cache;
-            private readonly SteamFriends _steamFriends;
-
-            public FriendList(SteamFriends steamFriends)
+            public override bool Equals(object obj)
             {
-                _steamFriends = steamFriends;
-                _cache = new Dictionary<SteamID, Friend>();
+                if (obj == null)
+                    return false;
+
+                var target = obj as Friend;
+                if ((object) target == null)
+                    return false;
+
+                return SteamId == target.SteamId;
             }
 
-            IEnumerator IEnumerable.GetEnumerator()
+            public bool Equals(Friend friend)
             {
-                return GetEnumerator();
+                if ((object) friend == null)
+                    return false;
+
+                return SteamId == friend.SteamId;
             }
 
-            public IEnumerator<Friend> GetEnumerator()
+            public override int GetHashCode()
             {
-                for (var i = 0; i < Count; ++i)
-                {
-                    yield return this[i];
-                }
+                return SteamId.GetHashCode();
             }
 
-            public Friend this[int index]
+            public static bool operator ==(Friend a, Friend b)
             {
-                get
-                {
-                    var steamId = _steamFriends.GetFriendByIndex(index);
+                if (ReferenceEquals(a, b))
+                    return true;
 
-                    if (!_cache.ContainsKey(steamId))
-                        _cache[steamId] = new Friend(steamId, _steamFriends);
+                if (((object) a == null) || ((object) b == null))
+                    return false;
 
-                    return _cache[steamId];
-                }
+                return a.SteamId == b.SteamId;
             }
 
-            public int Count
+            public static bool operator !=(Friend a, Friend b)
             {
-                get { return _steamFriends.GetFriendCount(); }
+                return !(a == b);
             }
         }
     }

@@ -185,7 +185,7 @@
                             <DiscreteBooleanKeyFrame KeyTime="0" Value="False" />
                         </BooleanAnimationUsingKeyFrames>
                         <BooleanAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.IsEnabled)"
-                                                        Storyboard.TargetName="DeleteFriendButton">
+                                                        Storyboard.TargetName="RemoveFriendButton">
                             <DiscreteBooleanKeyFrame KeyTime="0" Value="False" />
                         </BooleanAnimationUsingKeyFrames>
                     </Storyboard>
@@ -236,7 +236,9 @@
                     <Label FontFamily="Microsoft YaHei UI">刷新列表</Label>
                 </StackPanel>
             </Button>
-            <Button x:Name="SendMessageButton" Style="{DynamicResource OperationButtonStyle}" Margin="5, 0" Width="60">
+            <Button x:Name="SendMessageButton" Style="{DynamicResource OperationButtonStyle}" Margin="5, 0" Width="60"
+                    Command="{Binding SendChatMessage, Mode=OneWay}"
+                    CommandParameter="{Binding Path=SelectedItems, ElementName=FriendListView}">
                 <StackPanel Margin="0, 5, 0, 0">
                     <Rectangle Width="25" Height="25" x:Name="SendMessageButtonIcon"
                                Fill="{Binding Foreground, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Button}}}">
@@ -294,7 +296,9 @@
                     <Label FontFamily="Microsoft YaHei UI">添加好友</Label>
                 </StackPanel>
             </Button>
-            <Button x:Name="DeleteFriendButton" Style="{DynamicResource OperationButtonStyle}" Margin="5, 0" Width="60">
+            <Button x:Name="RemoveFriendButton" Style="{DynamicResource OperationButtonStyle}" Margin="5, 0" Width="60"
+                    Command="{Binding RemoveFriend, Mode=OneWay}"
+                    CommandParameter="{Binding Path=SelectedItems, ElementName=FriendListView}">
                 <StackPanel Margin="0, 5, 0, 0">
                     <Rectangle x:Name="DeleteFriendButtonIcon" Width="25" Height="25"
                                Fill="{Binding Foreground, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Button}}}">
