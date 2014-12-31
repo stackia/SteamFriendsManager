@@ -104,14 +104,14 @@ namespace SteamFriendsManager.ViewModel
                         if (string.IsNullOrWhiteSpace(Username))
                         {
                             MessengerInstance.Send(new ShowMessageDialogMessageWithCallback("提示", "请输入用户名。",
-                                () => IsLoading = false));
+                                result => IsLoading = false));
                             return;
                         }
 
                         if (string.IsNullOrWhiteSpace(Password))
                         {
                             MessengerInstance.Send(new ShowMessageDialogMessageWithCallback("提示", "请输入密码。",
-                                () => IsLoading = false));
+                                result => IsLoading = false));
                             return;
                         }
 

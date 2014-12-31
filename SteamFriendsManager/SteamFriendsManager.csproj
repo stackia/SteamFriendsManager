@@ -158,6 +158,7 @@
     <Compile Include="Utility\Image.cs" />
     <Compile Include="Utility\PasswordBoxHelper.cs" />
     <Compile Include="Utility\TransitioningContentControl.cs" />
+    <Compile Include="Utility\UriExtension.cs" />
     <Compile Include="Utility\VisualStates.cs" />
     <Compile Include="ViewModel\FriendListPageViewModel.cs" />
     <Compile Include="ViewModel\LoginPageViewModel.cs" />
