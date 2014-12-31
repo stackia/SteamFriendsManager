@@ -16,7 +16,6 @@ namespace SteamFriendsManager.ViewModel
     public class FriendListPageViewModel : ViewModelBase
     {
         private RelayCommand _changePersonalName;
-        private RelayCommand _refreshFriends;
         private RelayCommand<IList> _removeFriend;
         private RelayCommand<IList> _sendChatMessage;
         private RelayCommand _switchAccount;
@@ -55,15 +54,6 @@ namespace SteamFriendsManager.ViewModel
                     MessengerInstance.Send(new ClearPageHistoryOnNextTryLoginMessage());
                     MessengerInstance.Send(new SwitchPageMessage(SwitchPageMessage.Page.Login));
                 }));
-            }
-        }
-
-        public RelayCommand RefreshFrineds
-        {
-            get
-            {
-                return _refreshFriends ??
-                       (_refreshFriends = new RelayCommand(() => { RaisePropertyChanged(() => Friends); }));
             }
         }
 
