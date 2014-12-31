@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
@@ -15,6 +16,7 @@ namespace SteamFriendsManager.ViewModel
 {
     public class FriendListPageViewModel : ViewModelBase
     {
+        private RelayCommand _addFriend;
         private RelayCommand _changePersonaName;
         private RelayCommand<IList> _removeFriend;
         private string _searchText;
@@ -230,6 +232,94 @@ namespace SteamFriendsManager.ViewModel
                             }
                         }));
                     }
+                }));
+            }
+        }
+
+        public RelayCommand AddFriend
+        {
+            get
+            {
+                return _addFriend ?? (_addFriend = new RelayCommand(() =>
+                {
+                    MessengerInstance.Send(new ShowInputDialogMessage("添加好友", @"请输入你要添加好友ID，当前支持以下几种格式：
+* 对方用户名
+* STEAM_0:0:19874118
+* 76561198000013964
+* http://steamcommunity.com/profiles/76561198000013964",
+                        async s =>
+                        {
+                            if (s == null)
+                                return;
+
+                            if (string.IsNullOrWhiteSpace(s))
+                                MessengerInstance.Send(new ShowMessageDialogMessage("添加失败", "输入无效"));
+
+                            try
+                            {
+                                SteamFriends.FriendAddedCallback result;
+                                do
+                                {
+                                    if (Regex.IsMatch(s, @"^7656\d{13}$"))
+                                    {
+                                        UInt64 steamId64;
+                                        UInt64.TryParse(s, out steamId64);
+                                        var steamId = new SteamID();
+                                        steamId.SetFromUInt64(steamId64);
+                                        result = await _steamClientService.AddFriendAsync(steamId64);
+                                        break;
+                                    }
+
+                                    var match = Regex.Match(s,
+                                        @"^http(?:s)?://steamcommunity.com/profiles/(7656\d{13})$");
+                                    if (match.Success)
+                                    {
+                                        UInt64 steamId64;
+                                        UInt64.TryParse(match.Groups[1].Value, out steamId64);
+                                        var steamId = new SteamID();
+                                        steamId.SetFromUInt64(steamId64);
+                                        result = await _steamClientService.AddFriendAsync(steamId);
+                                        break;
+                                    }
+
+                                    if (Regex.IsMatch(s, @"^(?i)STEAM(?-i)_\d:\d:\d{8}$"))
+                                    {
+                                        result = await _steamClientService.AddFriendAsync(new SteamID(s));
+                                        break;
+                                    }
+
+                                    result = await _steamClientService.AddFriendAsync(s);
+                                } while (false);
+
+                                if (result == null)
+                                    return;
+
+                                switch (result.Result)
+                                {
+                                    case EResult.OK:
+                                        MessengerInstance.Send(new ShowMessageDialogMessage("添加成功",
+                                            string.Format("你成功向 {0} 发出了好友请求。", result.PersonaName)));
+                                        break;
+
+                                    case EResult.DuplicateName:
+                                        MessengerInstance.Send(new ShowMessageDialogMessage("添加失败", "对方已经是你的好友了。"));
+                                        break;
+
+                                    case EResult.AccountNotFound:
+                                        MessengerInstance.Send(new ShowMessageDialogMessage("添加失败", "指定用户不存在。"));
+                                        break;
+
+                                    default:
+                                        MessengerInstance.Send(new ShowMessageDialogMessage("添加失败",
+                                            result.Result.ToString()));
+                                        break;
+                                }
+                            }
+                            catch (TimeoutException)
+                            {
+                                MessengerInstance.Send(new ShowMessageDialogMessage("添加失败", "连接超时。"));
+                            }
+                        }));
                 }));
             }
         }

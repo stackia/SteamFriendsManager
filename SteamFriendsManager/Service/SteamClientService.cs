@@ -15,13 +15,14 @@ namespace SteamFriendsManager.Service
 {
     public class SteamClientService : IDisposable
     {
+        //private TaskCompletionSource<SteamUser.LoggedOffCallback> _logoutTaskCompletionSource;
+        private TaskCompletionSource<SteamFriends.FriendAddedCallback> _addFriendTaskCompletionSource;
         private CancellationTokenSource _callbackHandlerCancellationTokenSource;
         private TaskCompletionSource<SteamClient.ConnectedCallback> _connectTaskCompletionSource;
         private TaskCompletionSource<SteamClient.DisconnectedCallback> _disconnectTaskCompletionSource;
         private bool _disposed;
         private string _lastLoginUsername;
         private TaskCompletionSource<SteamUser.LoggedOnCallback> _loginTaskCompletionSource;
-        //private TaskCompletionSource<SteamUser.LoggedOffCallback> _logoutTaskCompletionSource;
         private TaskCompletionSource<SteamUser.AccountInfoCallback> _setPersonaNameTaskCompletionSource;
         private TaskCompletionSource<SteamFriends.PersonaStateCallback> _setPersonaStateTaskCompletionSource;
         private readonly ApplicationSettingsService _applicationSettingsService;
@@ -198,6 +199,12 @@ namespace SteamFriendsManager.Service
                             }
                         });
                     });
+
+                    callback.Handle<SteamFriends.FriendAddedCallback>(cb =>
+                    {
+                        if (_addFriendTaskCompletionSource != null && !_addFriendTaskCompletionSource.Task.IsCompleted)
+                            _addFriendTaskCompletionSource.TrySetResult(cb);
+                    });
                 }
             }, _callbackHandlerCancellationTokenSource.Token);
         }
@@ -358,6 +365,32 @@ namespace SteamFriendsManager.Service
             });
             ThrowIfTimeout(taskCompletionSource);
             return taskCompletionSource.Task;
+        }
+
+        public SteamFriends.FriendAddedCallback AddFriend(SteamID target)
+        {
+            return AddFriendAsync(target).Result;
+        }
+
+        public Task<SteamFriends.FriendAddedCallback> AddFriendAsync(SteamID target)
+        {
+            _addFriendTaskCompletionSource = new TaskCompletionSource<SteamFriends.FriendAddedCallback>();
+            Task.Run(() => { _steamFriends.AddFriend(target); });
+            ThrowIfTimeout(_addFriendTaskCompletionSource);
+            return _addFriendTaskCompletionSource.Task;
+        }
+
+        public SteamFriends.FriendAddedCallback AddFriend(string targetAccountNameOrEmail)
+        {
+            return AddFriendAsync(targetAccountNameOrEmail).Result;
+        }
+
+        public Task<SteamFriends.FriendAddedCallback> AddFriendAsync(string targetAccountNameOrEmail)
+        {
+            _addFriendTaskCompletionSource = new TaskCompletionSource<SteamFriends.FriendAddedCallback>();
+            Task.Run(() => { _steamFriends.AddFriend(targetAccountNameOrEmail); });
+            ThrowIfTimeout(_addFriendTaskCompletionSource);
+            return _addFriendTaskCompletionSource.Task;
         }
 
         public void Logout()
