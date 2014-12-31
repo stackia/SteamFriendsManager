@@ -23,7 +23,7 @@ namespace SteamFriendsManager.Service
             try
             {
                 settingsFileStream = File.Open(Path.Combine(Environment.CurrentDirectory, SettingsFileName),
-                    FileMode.OpenOrCreate, FileAccess.Write);
+                    FileMode.Create, FileAccess.Write);
                 using (var streamWriter = new StreamWriter(settingsFileStream))
                 {
                     settingsFileStream = null;
