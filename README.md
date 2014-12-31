@@ -2,15 +2,29 @@
 
 A new revolution of Steam friends management.
 
+## Install
+
+You have to install [the latest .Net Framework][1]. The program is build on the .Net Framework 4.5.
+
+[Click Here to Download the Latest Release][2]
+
 ## Screenshots
 
 The program is still under development but there are some screenshots to preview its features:
 
-![Welcome Page][1]
+![Welcome Page][3]
 
-![Login Page][2]
+![Login Page][4]
 
-![Friend List Page][3]
+![Friend List Page][5]
+
+![Search][6]
+
+![Add Friend][7]
+
+![Send Message][8]
+
+![Switch Persona State][9]
 
 ## License
 
@@ -44,6 +58,13 @@ New BSD License
 > OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 > OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-  [1]: http://i.imgur.com/Spx75JT.png
-  [2]: http://i.imgur.com/EAKKz7T.png
-  [3]: http://i.imgur.com/2aMbYkY.png
+
+  [1]: http://www.microsoft.com/en-us/download/details.aspx?id=42642
+  [2]: https://github.com/stackia/SteamFriendsManager/releases
+  [3]: http://i.imgur.com/OfhD89B.png
+  [4]: http://i.imgur.com/EaD7h7k.png
+  [5]: http://i.imgur.com/LCf1mR4.png
+  [6]: http://i.imgur.com/wZgS4zu.png
+  [7]: http://i.imgur.com/lBEkFWZ.png
+  [8]: http://i.imgur.com/Fp9uuXo.png
+  [9]: http://i.imgur.com/Ma0LyQv.png
