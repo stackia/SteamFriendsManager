@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
@@ -28,7 +29,7 @@ namespace SteamFriendsManager.ViewModel
                 msg => { RaisePropertyChanged(() => PersonalName); });
         }
 
-        public ObservableCollection<SteamClientService.Friend> Friends
+        public IEnumerable<SteamClientService.Friend> Friends
         {
             get { return _steamClientService.Friends; }
         }
@@ -52,6 +53,7 @@ namespace SteamFriendsManager.ViewModel
                 return _switchAccount ?? (_switchAccount = new RelayCommand(() =>
                 {
                     MessengerInstance.Send(new ClearPageHistoryOnNextTryLoginMessage());
+                    MessengerInstance.Send(new LogoutOnNextTryLoginMessage());
                     MessengerInstance.Send(new SwitchPageMessage(SwitchPageMessage.Page.Login));
                 }));
             }

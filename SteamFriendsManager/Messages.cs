@@ -50,6 +50,10 @@ namespace SteamFriendsManager
     {
     }
 
+    internal class LogoutOnNextTryLoginMessage : MessageBase
+    {
+    }
+
     internal interface IMessageDialogMessage
     {
         string Title { get; set; }

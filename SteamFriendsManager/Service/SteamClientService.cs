@@ -107,6 +107,12 @@ namespace SteamFriendsManager.Service
                             _loginTaskCompletionSource.TrySetResult(cb);
                     });
 
+                    callback.Handle<SteamUser.LoggedOffCallback>(cb =>
+                    {
+                        if (_logoutTaskCompletionSource != null && !_logoutTaskCompletionSource.Task.IsCompleted)
+                            _logoutTaskCompletionSource.TrySetResult(cb);
+                    });
+
                     callback.Handle<SteamUser.UpdateMachineAuthCallback>(async cb =>
                     {
                         if (_applicationSettingsService.Settings.SentryHashStore == null)
@@ -197,6 +203,7 @@ namespace SteamFriendsManager.Service
                 {
                     try
                     {
+                        await LogoutAsync(); // Not sure if it is of any use to logout here 
                         await DisconnectAsync();
                         break;
                     }
@@ -323,15 +330,19 @@ namespace SteamFriendsManager.Service
 
         public void Logout()
         {
-            LogoutAsync().Wait();
+            //LogoutAsync().Wait();
+            _steamUser.LogOff();
         }
 
+
+        // The LoggedOffCallback doesn't work. We cannot get any response on this operation.
         public Task LogoutAsync()
         {
-            _logoutTaskCompletionSource = new TaskCompletionSource<SteamUser.LoggedOffCallback>();
-            Task.Run(() => _steamUser.LogOff());
-            ThrowIfTimeout(_logoutTaskCompletionSource);
-            return _logoutTaskCompletionSource.Task;
+            //_logoutTaskCompletionSource = new TaskCompletionSource<SteamUser.LoggedOffCallback>();
+            //Task.Run(() => _steamUser.LogOff());
+            //ThrowIfTimeout(_logoutTaskCompletionSource);
+            //return _logoutTaskCompletionSource.Task;
+            return Task.Run(() => Logout());
         }
 
         public void Disconnect()
