@@ -17,14 +17,12 @@ namespace SteamFriendsManager
                         async () => { await this.ShowMessageAsync(msg.Title, msg.Message); });
                 });
 
-            Messenger.Default.Register<ShowMessageDialogMessageWithCallback>(this, msg =>
-            {
-                DispatcherHelper.CheckBeginInvokeOnUI(async () =>
+            Messenger.Default.Register<ShowMessageDialogMessageWithCallback>(this,
+                msg =>
                 {
-                    await this.ShowMessageAsync(msg.Title, msg.Message);
-                    msg.Execute();
+                    DispatcherHelper.CheckBeginInvokeOnUI(
+                        async () => { msg.Execute(await this.ShowMessageAsync(msg.Title, msg.Message, msg.Style)); });
                 });
-            });
 
             Messenger.Default.Register<ShowInputDialogMessage>(this,
                 msg =>

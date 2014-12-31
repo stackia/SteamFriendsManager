@@ -1,5 +1,6 @@
 ﻿using System;
 using GalaSoft.MvvmLight.Messaging;
+using MahApps.Metro.Controls.Dialogs;
 using SteamFriendsManager.Page;
 
 namespace SteamFriendsManager
@@ -67,15 +68,24 @@ namespace SteamFriendsManager
         public string Message { get; set; }
     }
 
-    internal class ShowMessageDialogMessageWithCallback : NotificationMessageAction, IMessageDialogMessage
+    internal class ShowMessageDialogMessageWithCallback : NotificationMessageAction<MessageDialogResult>,
+        IMessageDialogMessage
     {
-        public ShowMessageDialogMessageWithCallback(string title, string message, Action callback)
+        public ShowMessageDialogMessageWithCallback(string title, string message, Action<MessageDialogResult> callback)
+            : this(title, message, MessageDialogStyle.Affirmative, callback)
+        {
+        }
+
+        public ShowMessageDialogMessageWithCallback(string title, string message, MessageDialogStyle style,
+            Action<MessageDialogResult> callback)
             : base(null, callback)
         {
             Title = title;
             Message = message;
+            Style = style;
         }
 
+        public MessageDialogStyle Style { get; set; }
         public string Title { get; set; }
         public string Message { get; set; }
     }
