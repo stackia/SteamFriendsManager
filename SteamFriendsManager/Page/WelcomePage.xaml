@@ -19,7 +19,7 @@
             <FlowDocument FontSize="16">
                 <Paragraph TextAlignment="Center" Padding="0,0,0,6">
                     <Run Text="Steam 好友管理器 " FontSize="32" FontFamily="Microsoft JhengHei UI Light" />
-                    <Run Text="1.0" FontSize="20" />
+                    <Run Text="{Binding Version, Mode=OneWay}" FontSize="20" />
                 </Paragraph>
                 <Paragraph>特色功能：</Paragraph>
                 <List MarkerStyle="Circle">
