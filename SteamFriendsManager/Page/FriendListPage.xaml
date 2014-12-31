@@ -5,14 +5,12 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
     xmlns:ei="http://schemas.microsoft.com/expression/2010/interactions"
-    xmlns:converter="clr-namespace:SteamFriendsManager.Converter"
     xmlns:utils="clr-namespace:SteamFriendsManager.Utility"
     x:Class="SteamFriendsManager.Page.FriendListPage"
     mc:Ignorable="d"
     d:DesignHeight="600"
     d:DesignWidth="870">
     <UserControl.Resources>
-        <converter:SteamFriendAvatarConverter x:Key="SteamFriendAvatarConverter" />
         <Style x:Key="FriendListViewItemStyle" TargetType="{x:Type ListViewItem}">
             <Setter Property="Foreground" Value="{DynamicResource BlackBrush}" />
             <Setter Property="HorizontalContentAlignment" Value="Stretch" />
@@ -304,7 +302,7 @@
                 </StackPanel>
             </Button>
             <Button Style="{DynamicResource OperationButtonStyle}" Margin="5, 0" Width="60"
-                    Command="{Binding ChangePersonalName, Mode=OneWay}">
+                    Command="{Binding ChangePersonaName, Mode=OneWay}">
                 <StackPanel Margin="0, 5, 0, 0">
                     <Rectangle Width="25" Height="25"
                                Fill="{Binding Foreground, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Button}}}">
@@ -315,7 +313,40 @@
                     <Label FontFamily="Microsoft YaHei UI">修改昵称</Label>
                 </StackPanel>
             </Button>
-            <Button Style="{DynamicResource OperationButtonStyle}" Margin="5, 0" Width="60">
+            <Button x:Name="SwitchStateButton" Style="{DynamicResource OperationButtonStyle}" Margin="5, 0" Width="60"
+                    ContextMenuService.Placement="Bottom">
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="Click">
+                        <ei:ChangePropertyAction TargetName="SwitchOnlineStateContextMenu"
+                                                 PropertyName="PlacementTarget"
+                                                 Value="{Binding ElementName=SwitchStateButton}" />
+                        <ei:ChangePropertyAction TargetName="SwitchOnlineStateContextMenu" PropertyName="Placement">
+                            <ei:ChangePropertyAction.Value>
+                                <PlacementMode>Bottom</PlacementMode>
+                            </ei:ChangePropertyAction.Value>
+                        </ei:ChangePropertyAction>
+                        <ei:ChangePropertyAction TargetName="SwitchOnlineStateContextMenu" PropertyName="IsOpen"
+                                                 Value="True" />
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
+                <Button.ContextMenu>
+                    <ContextMenu x:Name="SwitchOnlineStateContextMenu">
+                        <MenuItem Header="在线" Command="{Binding SwitchPersonaState, Mode=OneWay}"
+                                  CommandParameter="{Binding Source=Online, Mode=OneTime, Converter={StaticResource SteamPersonaStateConverter}}" />
+                        <MenuItem Header="离开" Command="{Binding SwitchPersonaState, Mode=OneWay}"
+                                  CommandParameter="{Binding Source=Away, Mode=OneTime, Converter={StaticResource SteamPersonaStateConverter}}" />
+                        <MenuItem Header="忙碌" Command="{Binding SwitchPersonaState, Mode=OneWay}"
+                                  CommandParameter="{Binding Source=Busy, Mode=OneTime, Converter={StaticResource SteamPersonaStateConverter}}" />
+                        <MenuItem Header="想玩游戏" Command="{Binding SwitchPersonaState, Mode=OneWay}"
+                                  CommandParameter="{Binding Source=LookingToPlay, Mode=OneTime, Converter={StaticResource SteamPersonaStateConverter}}" />
+                        <MenuItem Header="想交易" Command="{Binding SwitchPersonaState, Mode=OneWay}"
+                                  CommandParameter="{Binding Source=LookingToTrade, Mode=OneTime, Converter={StaticResource SteamPersonaStateConverter}}" />
+                        <MenuItem Header="打盹" Command="{Binding SwitchPersonaState, Mode=OneWay}"
+                                  CommandParameter="{Binding Source=Snooze, Mode=OneTime, Converter={StaticResource SteamPersonaStateConverter}}" />
+                        <MenuItem Header="离线" Command="{Binding SwitchPersonaState, Mode=OneWay}"
+                                  CommandParameter="{Binding Source=Offline, Mode=OneTime, Converter={StaticResource SteamPersonaStateConverter}}" />
+                    </ContextMenu>
+                </Button.ContextMenu>
                 <StackPanel Margin="0, 5, 0, 0">
                     <Rectangle Width="25" Height="25"
                                Fill="{Binding Foreground, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Button}}}">
@@ -326,7 +357,8 @@
                     <Label FontFamily="Microsoft YaHei UI">切换状态</Label>
                 </StackPanel>
             </Button>
-            <Label Content="{Binding PersonalName, Mode=OneWay}" />
+            <Label Content="{Binding PersonaName, Mode=OneWay}" />
+            <Label Content="{Binding PersonaState, Mode=OneWay}" />
         </StackPanel>
         <ListView x:Name="FriendListView" Grid.Row="1" ItemsSource="{Binding Friends, Mode=OneWay}"
                   Margin="15, 0, 15, 10" utils:DragSelectionHelper.IsDragSelectionEnabled="True"
@@ -346,9 +378,9 @@
                         </Grid.ColumnDefinitions>
                         <utils:Image Margin="3" Stretch="UniformToFill"
                                      ImageUrl="{Binding Avatar, Mode=OneWay, Converter={StaticResource SteamFriendAvatarConverter}}" />
-                        <Label Grid.Column="1" Grid.Row="0" Content="{Binding PersonalName, Mode=OneWay}"
+                        <Label Grid.Column="1" Grid.Row="0" Content="{Binding PersonaName, Mode=OneWay}"
                                FontFamily="Microsoft YaHei UI" VerticalAlignment="Center" FontSize="16"
-                               ToolTip="{Binding PersonalName, Mode=OneWay}" />
+                               ToolTip="{Binding PersonaName, Mode=OneWay}" />
                     </Grid>
                 </DataTemplate>
             </ListView.ItemTemplate>

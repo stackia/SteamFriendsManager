@@ -21,8 +21,9 @@ namespace SteamFriendsManager.Service
         private bool _disposed;
         private string _lastLoginUsername;
         private TaskCompletionSource<SteamUser.LoggedOnCallback> _loginTaskCompletionSource;
-        private TaskCompletionSource<SteamUser.LoggedOffCallback> _logoutTaskCompletionSource;
-        private TaskCompletionSource<SteamUser.AccountInfoCallback> _setPersonalNameTaskCompletionSource;
+        //private TaskCompletionSource<SteamUser.LoggedOffCallback> _logoutTaskCompletionSource;
+        private TaskCompletionSource<SteamUser.AccountInfoCallback> _setPersonaNameTaskCompletionSource;
+        private TaskCompletionSource<SteamFriends.PersonaStateCallback> _setPersonaStateTaskCompletionSource;
         private readonly ApplicationSettingsService _applicationSettingsService;
         private readonly SteamClient _steamClient;
         private readonly SteamFriends _steamFriends;
@@ -48,16 +49,14 @@ namespace SteamFriendsManager.Service
 
         public ObservableCollection<Friend> Friends { get; private set; }
 
-        public string PersonalName
+        public string PersonaName
         {
             get { return _steamFriends.GetPersonaName(); }
-            set
-            {
-                if (_steamFriends.GetPersonaName() == value)
-                    return;
+        }
 
-                SetPersonalNameAsync(value);
-            }
+        public EPersonaState PersonaState
+        {
+            get { return _steamFriends.GetPersonaState(); }
         }
 
         public void Dispose()
@@ -107,11 +106,11 @@ namespace SteamFriendsManager.Service
                             _loginTaskCompletionSource.TrySetResult(cb);
                     });
 
-                    callback.Handle<SteamUser.LoggedOffCallback>(cb =>
-                    {
-                        if (_logoutTaskCompletionSource != null && !_logoutTaskCompletionSource.Task.IsCompleted)
-                            _logoutTaskCompletionSource.TrySetResult(cb);
-                    });
+                    //callback.Handle<SteamUser.LoggedOffCallback>(cb =>
+                    //{
+                    //    if (_logoutTaskCompletionSource != null && !_logoutTaskCompletionSource.Task.IsCompleted)
+                    //        _logoutTaskCompletionSource.TrySetResult(cb);
+                    //});
 
                     callback.Handle<SteamUser.UpdateMachineAuthCallback>(async cb =>
                     {
@@ -138,6 +137,14 @@ namespace SteamFriendsManager.Service
 
                     callback.Handle<SteamFriends.PersonaStateCallback>(cb =>
                     {
+                        if (cb.FriendID == _steamUser.SteamID)
+                        {
+                            if (_setPersonaStateTaskCompletionSource != null &&
+                                !_setPersonaStateTaskCompletionSource.Task.IsCompleted)
+                                _setPersonaStateTaskCompletionSource.TrySetResult(cb);
+
+                            return;
+                        }
                         var query = from f in Friends where f.SteamId.Equals(cb.FriendID) select f;
                         var friends = query as Friend[] ?? query.ToArray();
 
@@ -160,10 +167,10 @@ namespace SteamFriendsManager.Service
 
                     callback.Handle<SteamUser.AccountInfoCallback>(cb =>
                     {
-                        if (_setPersonalNameTaskCompletionSource != null &&
-                            !_setPersonalNameTaskCompletionSource.Task.IsCompleted)
-                            _setPersonalNameTaskCompletionSource.TrySetResult(cb);
-                        Messenger.Default.Send(new PersonalNameChangedMessage());
+                        if (_setPersonaNameTaskCompletionSource != null &&
+                            !_setPersonaNameTaskCompletionSource.Task.IsCompleted)
+                            _setPersonaNameTaskCompletionSource.TrySetResult(cb);
+                        Messenger.Default.Send(new PersonaNameChangedMessage());
                     });
 
                     callback.Handle<SteamFriends.FriendsListCallback>(cb =>
@@ -267,29 +274,54 @@ namespace SteamFriendsManager.Service
             return _loginTaskCompletionSource.Task;
         }
 
-        public SteamUser.AccountInfoCallback SetPersonalName(string personalName)
+        public SteamUser.AccountInfoCallback SetPersonaName(string personaName)
         {
-            return SetPersonalNameAsync(personalName).Result;
+            return SetPersonaNameAsync(personaName).Result;
         }
 
-        public Task<SteamUser.AccountInfoCallback> SetPersonalNameAsync(string personalName)
+        public Task<SteamUser.AccountInfoCallback> SetPersonaNameAsync(string personaName)
         {
-            _setPersonalNameTaskCompletionSource = new TaskCompletionSource<SteamUser.AccountInfoCallback>();
-            var oldName = PersonalName;
+            _setPersonaNameTaskCompletionSource = new TaskCompletionSource<SteamUser.AccountInfoCallback>();
+            var oldName = PersonaName;
             Task.Run(() =>
             {
-                _steamFriends.SetPersonaName(personalName);
-                Messenger.Default.Send(new PersonalNameChangedMessage());
+                _steamFriends.SetPersonaName(personaName);
+                Messenger.Default.Send(new PersonaNameChangedMessage());
             });
-            ThrowIfTimeout(_setPersonalNameTaskCompletionSource, () =>
+            ThrowIfTimeout(_setPersonaNameTaskCompletionSource, () =>
             {
                 Task.Run(() =>
                 {
                     _steamFriends.SetPersonaName(oldName);
-                    Messenger.Default.Send(new PersonalNameChangedMessage());
+                    Messenger.Default.Send(new PersonaNameChangedMessage());
                 });
             });
-            return _setPersonalNameTaskCompletionSource.Task;
+            return _setPersonaNameTaskCompletionSource.Task;
+        }
+
+        public SteamFriends.PersonaStateCallback SetPersonaState(EPersonaState state)
+        {
+            return SetPersonaStateAsync(state).Result;
+        }
+
+        public Task<SteamFriends.PersonaStateCallback> SetPersonaStateAsync(EPersonaState state)
+        {
+            _setPersonaStateTaskCompletionSource = new TaskCompletionSource<SteamFriends.PersonaStateCallback>();
+            var oldState = PersonaState;
+            Task.Run(() =>
+            {
+                _steamFriends.SetPersonaState(state);
+                Messenger.Default.Send(new PersonaStateChangedMessage());
+            });
+            ThrowIfTimeout(_setPersonaStateTaskCompletionSource, () =>
+            {
+                Task.Run(() =>
+                {
+                    _steamFriends.SetPersonaState(oldState);
+                    Messenger.Default.Send(new PersonaStateChangedMessage());
+                });
+            });
+            return _setPersonaStateTaskCompletionSource.Task;
         }
 
         public void SendChatMessage(SteamID target, EChatEntryType type, string message)
@@ -333,7 +365,6 @@ namespace SteamFriendsManager.Service
             //LogoutAsync().Wait();
             _steamUser.LogOff();
         }
-
 
         // The LoggedOffCallback doesn't work. We cannot get any response on this operation.
         public Task LogoutAsync()
@@ -401,7 +432,7 @@ namespace SteamFriendsManager.Service
                 get { return _steamFriends.GetFriendGamePlayedName(SteamId); }
             }
 
-            public string PersonalName
+            public string PersonaName
             {
                 get { return _steamFriends.GetFriendPersonaName(SteamId); }
             }
@@ -429,7 +460,7 @@ namespace SteamFriendsManager.Service
                 OnPropertyChanged("Avatar");
                 OnPropertyChanged("GamePlayed");
                 OnPropertyChanged("GamePlayedName");
-                OnPropertyChanged("PersonalName");
+                OnPropertyChanged("PersonaName");
                 OnPropertyChanged("PersonaState");
                 OnPropertyChanged("Relationship");
             }

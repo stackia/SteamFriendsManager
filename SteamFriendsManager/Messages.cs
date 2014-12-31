@@ -115,7 +115,11 @@ namespace SteamFriendsManager
         public string Message { get; set; }
     }
 
-    internal class PersonalNameChangedMessage : MessageBase
+    internal class PersonaNameChangedMessage : MessageBase
+    {
+    }
+
+    internal class PersonaStateChangedMessage : MessageBase
     {
     }
 }

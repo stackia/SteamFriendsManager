@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
@@ -16,17 +15,22 @@ namespace SteamFriendsManager.ViewModel
 {
     public class FriendListPageViewModel : ViewModelBase
     {
-        private RelayCommand _changePersonalName;
+        private RelayCommand _changePersonaName;
         private RelayCommand<IList> _removeFriend;
         private RelayCommand<IList> _sendChatMessage;
         private RelayCommand _switchAccount;
+        private RelayCommand<EPersonaState> _switchPersonaState;
         private readonly SteamClientService _steamClientService;
 
         public FriendListPageViewModel(SteamClientService steamClientService)
         {
             _steamClientService = steamClientService;
-            MessengerInstance.Register<PersonalNameChangedMessage>(this,
-                msg => { RaisePropertyChanged(() => PersonalName); });
+
+            MessengerInstance.Register<PersonaNameChangedMessage>(this,
+                msg => { RaisePropertyChanged(() => PersonaName); });
+
+            MessengerInstance.Register<PersonaStateChangedMessage>(this,
+                msg => RaisePropertyChanged(() => PersonaState));
         }
 
         public IEnumerable<SteamClientService.Friend> Friends
@@ -34,16 +38,14 @@ namespace SteamFriendsManager.ViewModel
             get { return _steamClientService.Friends; }
         }
 
-        public string PersonalName
+        public string PersonaName
         {
-            get { return _steamClientService.PersonalName; }
-            set
-            {
-                if (_steamClientService.PersonalName == value)
-                    return;
+            get { return _steamClientService.PersonaName; }
+        }
 
-                _steamClientService.PersonalName = value;
-            }
+        public EPersonaState PersonaState
+        {
+            get { return _steamClientService.PersonaState; }
         }
 
         public RelayCommand SwitchAccount
@@ -59,15 +61,15 @@ namespace SteamFriendsManager.ViewModel
             }
         }
 
-        public RelayCommand ChangePersonalName
+        public RelayCommand ChangePersonaName
         {
             get
             {
-                return _changePersonalName ?? (_changePersonalName = new RelayCommand(() =>
+                return _changePersonaName ?? (_changePersonaName = new RelayCommand(() =>
                 {
-                    MessengerInstance.Send(new ShowInputDialogMessage("修改昵称", "请输入新昵称：", PersonalName, async s =>
+                    MessengerInstance.Send(new ShowInputDialogMessage("修改昵称", "请输入新昵称：", PersonaName, async s =>
                     {
-                        if (s == null || s == PersonalName)
+                        if (s == null || s == PersonaName)
                             return;
 
                         if (string.IsNullOrWhiteSpace(s))
@@ -78,13 +80,31 @@ namespace SteamFriendsManager.ViewModel
 
                         try
                         {
-                            await _steamClientService.SetPersonalNameAsync(s);
+                            await _steamClientService.SetPersonaNameAsync(s);
                         }
                         catch (TimeoutException)
                         {
                             MessengerInstance.Send(new ShowMessageDialogMessage("昵称修改失败", "连接超时，请重试。"));
                         }
                     }));
+                }));
+            }
+        }
+
+        public RelayCommand<EPersonaState> SwitchPersonaState
+        {
+            get
+            {
+                return _switchPersonaState ?? (_switchPersonaState = new RelayCommand<EPersonaState>(async state =>
+                {
+                    try
+                    {
+                        await _steamClientService.SetPersonaStateAsync(state);
+                    }
+                    catch (TimeoutException)
+                    {
+                        MessengerInstance.Send(new ShowMessageDialogMessage("切换状态失败", "连接超时，请重试。"));
+                    }
                 }));
             }
         }

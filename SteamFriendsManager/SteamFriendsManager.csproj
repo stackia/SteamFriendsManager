@@ -142,6 +142,7 @@
     </ApplicationDefinition>
     <Compile Include="Converter\InverseBooleanConverter.cs" />
     <Compile Include="Converter\SteamFriendAvatarConverter.cs" />
+    <Compile Include="Converter\SteamPersonaStateConverter.cs" />
     <Compile Include="Messages.cs" />
     <Compile Include="Page\FriendListPage.xaml.cs">
       <DependentUpon>FriendListPage.xaml</DependentUpon>

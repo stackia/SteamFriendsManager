@@ -11,9 +11,9 @@ namespace SteamFriendsManager.ViewModel
     public class LoginPageViewModel : ViewModelBase
     {
         private bool _clearPageHistoryOnNextTryLogin;
-        private bool _logoutOnNextTryLogin;
         private bool _isLoading;
         private RelayCommand _login;
+        private bool _logoutOnNextTryLogin;
         private string _password;
         private bool _shouldRememberAccount;
         private string _username;
@@ -36,10 +36,7 @@ namespace SteamFriendsManager.ViewModel
             MessengerInstance.Register<ClearPageHistoryOnNextTryLoginMessage>(this,
                 msg => { _clearPageHistoryOnNextTryLogin = true; });
 
-            MessengerInstance.Register<LogoutOnNextTryLoginMessage>(this, msg =>
-            {
-                _logoutOnNextTryLogin = true;
-            });
+            MessengerInstance.Register<LogoutOnNextTryLoginMessage>(this, msg => { _logoutOnNextTryLogin = true; });
         }
 
         public bool ShouldRememberAccount
@@ -140,6 +137,8 @@ namespace SteamFriendsManager.ViewModel
                                 if (_steamClientService.IsConnected)
                                 {
                                     await _steamClientService.DisconnectAsync();
+                                    await Task.Delay(1000);
+                                        // It may fail to connect if we immediately reconnect after disconnected
                                 }
 
                                 await _steamClientService.ConnectAsync();
@@ -202,6 +201,7 @@ namespace SteamFriendsManager.ViewModel
 
                                 if (success)
                                 {
+                                    await _steamClientService.SetPersonaStateAsync(EPersonaState.Online);
                                     _applicationSettingsService.Settings.ShouldRememberAccount =
                                         ShouldRememberAccount;
                                     if (ShouldRememberAccount)

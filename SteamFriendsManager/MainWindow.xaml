@@ -8,7 +8,7 @@
     xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
     xmlns:ei="http://schemas.microsoft.com/expression/2010/interactions"
     xmlns:utils="clr-namespace:SteamFriendsManager.Utility"
-    xmlns:cvt="clr-namespace:SteamFriendsManager.Converter" mc:Ignorable="d"
+    mc:Ignorable="d"
     x:Class="SteamFriendsManager.MainWindow"
     Title="Steam 好友管理器"
     Icon="Logo.ico"
@@ -16,9 +16,6 @@
     MinHeight="600"
     GlowBrush="{DynamicResource AccentColorBrush}"
     DataContext="{Binding Path=MainWindow, Mode=OneTime, Source={StaticResource Locator}}">
-    <metro:MetroWindow.Resources>
-        <cvt:InverseBooleanConverter x:Key="InverseBooleanConverter" />
-    </metro:MetroWindow.Resources>
 
     <i:Interaction.Triggers>
         <i:EventTrigger EventName="Closing">
