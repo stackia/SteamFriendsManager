@@ -134,6 +134,8 @@ namespace SteamFriendsManager.ViewModel
                                     await _steamClientService.LogoutAsync();
                                 }
 
+                                _steamClientService.ReconnectOnDisconnected = false;
+
                                 if (_steamClientService.IsConnected)
                                 {
                                     await _steamClientService.DisconnectAsync();
@@ -201,6 +203,7 @@ namespace SteamFriendsManager.ViewModel
 
                                 if (success)
                                 {
+                                    _steamClientService.ReconnectOnDisconnected = true;
                                     _applicationSettingsService.Settings.ShouldRememberAccount =
                                         ShouldRememberAccount;
                                     if (ShouldRememberAccount)

@@ -21,8 +21,10 @@ namespace SteamFriendsManager.Service
         private TaskCompletionSource<SteamClient.ConnectedCallback> _connectTaskCompletionSource;
         private TaskCompletionSource<SteamClient.DisconnectedCallback> _disconnectTaskCompletionSource;
         private bool _disposed;
-        private string _lastLoginUsername;
+        private SteamUser.LogOnDetails _lastLoginDetails;
         private TaskCompletionSource<SteamUser.LoggedOnCallback> _loginTaskCompletionSource;
+        private int _retryCount;
+        private CancellationTokenSource _retryCountResetCancellationTokenSource;
         private TaskCompletionSource<SteamUser.AccountInfoCallback> _setPersonaNameTaskCompletionSource;
         private TaskCompletionSource<SteamFriends.PersonaStateCallback> _setPersonaStateTaskCompletionSource;
         private readonly ApplicationSettingsService _applicationSettingsService;
@@ -42,6 +44,7 @@ namespace SteamFriendsManager.Service
         }
 
         public TimeSpan DefaultTimeout { get; set; }
+        public bool ReconnectOnDisconnected { get; set; }
 
         public bool IsConnected
         {
@@ -93,12 +96,26 @@ namespace SteamFriendsManager.Service
                     {
                         if (_connectTaskCompletionSource != null && !_connectTaskCompletionSource.Task.IsCompleted)
                             _connectTaskCompletionSource.TrySetResult(cb);
+
+                        // If the connection doesn't disconnect in 3 seconds, reset the retry count.
+                        _retryCountResetCancellationTokenSource = new CancellationTokenSource();
+                        Task.Delay(3000, _retryCountResetCancellationTokenSource.Token).ContinueWith(task =>
+                        {
+                            if (!task.IsCanceled)
+                                _retryCount = 0;
+                        });
                     });
 
                     callback.Handle<SteamClient.DisconnectedCallback>(cb =>
                     {
                         if (_disconnectTaskCompletionSource != null && !_disconnectTaskCompletionSource.Task.IsCompleted)
+                        {
                             _disconnectTaskCompletionSource.TrySetResult(cb);
+                        }
+                        else if (ReconnectOnDisconnected)
+                        {
+                            TryReconnect();
+                        }
                     });
 
                     callback.Handle<SteamUser.LoggedOnCallback>(cb =>
@@ -119,7 +136,7 @@ namespace SteamFriendsManager.Service
                             _applicationSettingsService.Settings.SentryHashStore = new Dictionary<string, byte[]>();
 
                         var sentryHash = CryptoHelper.SHAHash(cb.Data);
-                        _applicationSettingsService.Settings.SentryHashStore[_lastLoginUsername] = sentryHash;
+                        _applicationSettingsService.Settings.SentryHashStore[_lastLoginDetails.Username] = sentryHash;
                         await _applicationSettingsService.SaveAsync();
 
                         _steamUser.SendMachineAuthResponse(new SteamUser.MachineAuthDetails
@@ -209,6 +226,40 @@ namespace SteamFriendsManager.Service
             }, _callbackHandlerCancellationTokenSource.Token);
         }
 
+        private void TryReconnect()
+        {
+            if (_retryCount < 3)
+            {
+                // Unexceptedly disconnect, try reconnect.
+                if (_retryCountResetCancellationTokenSource != null &&
+                    !_retryCountResetCancellationTokenSource.IsCancellationRequested)
+                {
+                    _retryCountResetCancellationTokenSource.Cancel();
+                }
+                Task.Run(async () =>
+                {
+                    try
+                    {
+                        await ConnectAsync();
+                        if (_lastLoginDetails != null)
+                            await LoginAsync(_lastLoginDetails);
+                    }
+                    catch (TimeoutException)
+                    {
+                        if (ReconnectOnDisconnected)
+                            TryReconnect();
+                    }
+                });
+                _retryCount++;
+            }
+            else
+            {
+                ReconnectOnDisconnected = false;
+                _retryCount = 0;
+                Messenger.Default.Send(new ReconnectFailedMessage());
+            }
+        }
+
         public async Task StopAsync()
         {
             if (_steamClient.IsConnected)
@@ -270,7 +321,7 @@ namespace SteamFriendsManager.Service
             _loginTaskCompletionSource = new TaskCompletionSource<SteamUser.LoggedOnCallback>();
             Task.Run(() =>
             {
-                _lastLoginUsername = logOnDetails.Username;
+                _lastLoginDetails = logOnDetails;
                 if (_applicationSettingsService.Settings.SentryHashStore != null &&
                     _applicationSettingsService.Settings.SentryHashStore.ContainsKey(logOnDetails.Username))
                     logOnDetails.SentryFileHash =

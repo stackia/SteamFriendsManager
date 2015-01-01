@@ -36,6 +36,17 @@ namespace SteamFriendsManager.ViewModel
 
             MessengerInstance.Register<PersonaStateChangedMessage>(this,
                 msg => RaisePropertyChanged(() => PersonaState));
+
+            MessengerInstance.Register<ReconnectFailedMessage>(this, msg =>
+            {
+                MessengerInstance.Send(new ShowMessageDialogMessageWithCallback("连接中断",
+                    "你与 Steam 的服务器连接已中断。重试三次均无法连通，请检查网络后重新登录。",
+                    result =>
+                    {
+                        MessengerInstance.Send(new SwitchPageMessage(SwitchPageMessage.Page.Login));
+                        MessengerInstance.Send(new ClearPageHistoryMessage());
+                    }));
+            });
         }
 
         public IEnumerable<SteamClientService.Friend> Friends

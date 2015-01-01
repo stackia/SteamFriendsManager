@@ -54,6 +54,10 @@ namespace SteamFriendsManager
     {
     }
 
+    internal class ReconnectFailedMessage : MessageBase
+    {
+    }
+
     internal interface IMessageDialogMessage
     {
         string Title { get; set; }
