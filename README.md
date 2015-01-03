@@ -1,30 +1,30 @@
-# Steam Friends Manager
+# Steam Friends Manager [![Build Status][1]][2]
 
 A new revolution of Steam friends management.
 
 ## Install
 
-You have to install [the latest .Net Framework][1]. The program is build on the .Net Framework 4.5.
+You have to install [the latest .Net Framework][3]. The program is build on the .Net Framework 4.5.
 
-[Click Here to Download the Latest Release][2]
+[Click Here to Download the Latest Release][4]
 
 ## Screenshots
 
 The program is still under development but there are some screenshots to preview its features:
 
-![Welcome Page][3]
+![Welcome Page][5]
 
-![Login Page][4]
+![Login Page][6]
 
-![Friend List Page][5]
+![Friend List Page][7]
 
-![Search][6]
+![Search][8]
 
-![Add Friend][7]
+![Add Friend][9]
 
-![Send Message][8]
+![Send Message][10]
 
-![Switch Persona State][9]
+![Switch Persona State][11]
 
 ## License
 
@@ -59,12 +59,14 @@ New BSD License
 > OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 
-  [1]: http://www.microsoft.com/en-us/download/details.aspx?id=42642
-  [2]: https://github.com/stackia/SteamFriendsManager/releases
-  [3]: http://i.imgur.com/OfhD89B.png
-  [4]: http://i.imgur.com/EaD7h7k.png
-  [5]: http://i.imgur.com/LCf1mR4.png
-  [6]: http://i.imgur.com/wZgS4zu.png
-  [7]: http://i.imgur.com/lBEkFWZ.png
-  [8]: http://i.imgur.com/Fp9uuXo.png
-  [9]: http://i.imgur.com/Ma0LyQv.png
+  [1]: https://ci.appveyor.com/api/projects/status/275b2q8xv1jj8k9v?svg=true
+  [2]: https://ci.appveyor.com/project/stackia/steamfriendsmanager
+  [3]: http://www.microsoft.com/en-us/download/details.aspx?id=42642
+  [4]: https://github.com/stackia/SteamFriendsManager/releases
+  [5]: http://i.imgur.com/OfhD89B.png
+  [6]: http://i.imgur.com/EaD7h7k.png
+  [7]: http://i.imgur.com/LCf1mR4.png
+  [8]: http://i.imgur.com/wZgS4zu.png
+  [9]: http://i.imgur.com/lBEkFWZ.png
+  [10]: http://i.imgur.com/Fp9uuXo.png
+  [11]: http://i.imgur.com/Ma0LyQv.png
