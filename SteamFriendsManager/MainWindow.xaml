@@ -89,6 +89,7 @@
         <i:Interaction.Triggers>
             <i:EventTrigger EventName="Loaded">
                 <ei:GoToStateAction StateName="SwitchBackButtonCollapsed" />
+                <i:InvokeCommandAction Command="{Binding CheckForNewVersion, Mode=OneWay}" />
             </i:EventTrigger>
         </i:Interaction.Triggers>
 
