@@ -44,9 +44,7 @@ namespace SteamFriendsManager.Utility
                 passwordBox.PasswordChanged -= PasswordChanged;
 
                 if (!GetIsUpdating(passwordBox))
-                {
                     passwordBox.Password = (string) e.NewValue;
-                }
                 passwordBox.PasswordChanged += PasswordChanged;
             }
         }
@@ -60,14 +58,10 @@ namespace SteamFriendsManager.Utility
                 return;
 
             if ((bool) e.OldValue)
-            {
                 passwordBox.PasswordChanged -= PasswordChanged;
-            }
 
             if ((bool) e.NewValue)
-            {
                 passwordBox.PasswordChanged += PasswordChanged;
-            }
         }
 
         private static void PasswordChanged(object sender, RoutedEventArgs e)

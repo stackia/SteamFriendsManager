@@ -31,10 +31,12 @@ namespace SteamFriendsManager
                         async () =>
                         {
                             if (msg.DefaultText != null)
+                            {
                                 msg.Execute(await this.ShowInputAsync(msg.Title, msg.Message, new MetroDialogSettings
                                 {
                                     DefaultText = msg.DefaultText
                                 }));
+                            }
                             else
                                 msg.Execute(await this.ShowInputAsync(msg.Title, msg.Message));
                         });

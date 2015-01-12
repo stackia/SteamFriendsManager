@@ -107,16 +107,12 @@ namespace SteamFriendsManager.ViewModel
                 if (!string.IsNullOrEmpty(_searchText))
                 {
                     foreach (var friend in _steamClientService.Friends)
-                    {
                         friend.Show = friend.PersonaName.ToLower().Contains(_searchText.ToLower());
-                    }
                 }
                 else
                 {
                     foreach (var friend in _steamClientService.Friends)
-                    {
                         friend.Show = true;
-                    }
                 }
             }
         }
@@ -234,13 +230,9 @@ namespace SteamFriendsManager.ViewModel
                                     return false;
                                 }
                             }))
-                            {
                                 MessengerInstance.Send(new ShowMessageDialogMessage("群发成功", "所有消息都已成功送达！"));
-                            }
                             else
-                            {
                                 MessengerInstance.Send(new ShowMessageDialogMessage("群发失败", "部分消息发送超时。"));
-                            }
                         }));
                     }
                 }));
@@ -364,13 +356,9 @@ namespace SteamFriendsManager.ViewModel
                                     return false;
                                 }
                             }))
-                            {
                                 MessengerInstance.Send(new ShowMessageDialogMessage("删除成功", "选定好友删除成功。"));
-                            }
                             else
-                            {
                                 MessengerInstance.Send(new ShowMessageDialogMessage("删除失败", "部分好友删除请求发送超时。"));
-                            }
                         }));
                 }));
             }

@@ -27,7 +27,7 @@
 
             <cvt:SteamFriendAvatarConverter x:Key="SteamFriendAvatarConverter" />
             <cvt:SteamPersonaStateConverter x:Key="SteamPersonaStateConverter" />
-            <cvt:BooleanToOpacityConverter x:Key="BooleanToOpacityConverter" />
+            <cvt:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
 
             <vm:ViewModelLocator x:Key="Locator" d:IsDataSource="True"
                                  xmlns:vm="clr-namespace:SteamFriendsManager.ViewModel" />

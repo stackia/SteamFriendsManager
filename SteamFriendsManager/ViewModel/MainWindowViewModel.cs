@@ -41,9 +41,7 @@ namespace SteamFriendsManager.ViewModel
                         PageHistory.Push(CurrentPage);
                     }
                     else
-                    {
                         PageHistory.Push(CurrentPage);
-                    }
                     RaisePropertyChanged(() => SwitchBackButtonVisible);
                 });
             });
@@ -137,9 +135,7 @@ namespace SteamFriendsManager.ViewModel
                             }
                         }
                     }
-                    catch (WebException)
-                    {
-                    }
+                    catch (WebException) {}
                 }));
             }
         }

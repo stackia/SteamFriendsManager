@@ -19,9 +19,7 @@ namespace SteamFriendsManager.Utility
         {
             var root = GetImplementationRoot(dependencyObject);
             if (root == null)
-            {
                 return null;
-            }
 
             var vsg = VisualStateManager.GetVisualStateGroups(root);
             if (vsg == null)

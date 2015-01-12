@@ -1,22 +1,23 @@
 ﻿using System;
 using System.Globalization;
+using System.Windows;
 using System.Windows.Data;
 
 namespace SteamFriendsManager.Converter
 {
-    [ValueConversion(typeof (bool), typeof (double))]
-    public class BooleanToOpacityConverter : IValueConverter
+    [ValueConversion(typeof (bool), typeof (Visibility))]
+    public class BooleanToVisibilityConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter,
             CultureInfo culture)
         {
-            return (bool) value ? 1.0 : 0.1;
+            return (bool) value ? Visibility.Visible : Visibility.Collapsed;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter,
             CultureInfo culture)
         {
-            return Math.Abs((double) value - 1.0) < 0.05;
+            return (Visibility) value == Visibility.Visible;
         }
     }
 }

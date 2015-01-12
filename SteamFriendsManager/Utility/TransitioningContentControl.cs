@@ -137,16 +137,12 @@ namespace SteamFriendsManager.Utility
             {
                 // decouple event
                 if (_currentTransition != null)
-                {
                     _currentTransition.Completed -= OnTransitionCompleted;
-                }
 
                 _currentTransition = value;
 
                 if (_currentTransition != null)
-                {
                     _currentTransition.Completed += OnTransitionCompleted;
-                }
             }
         }
 
@@ -170,9 +166,7 @@ namespace SteamFriendsManager.Utility
             var newTransition = (TransitionType) e.NewValue;
 
             if (source.IsTransitioning)
-            {
                 source.AbortTransition();
-            }
 
             // find new transition
             var newStoryboard = source.GetStoryboard(newTransition);
@@ -196,9 +190,7 @@ namespace SteamFriendsManager.Utility
                 }
             }
             else
-            {
                 source.CurrentTransition = newStoryboard;
-            }
         }
 
         private static void OnRestartTransitionOnContentChangePropertyChanged(DependencyObject d,
@@ -208,16 +200,12 @@ namespace SteamFriendsManager.Utility
                 (bool) e.NewValue);
         }
 
-        protected virtual void OnRestartTransitionOnContentChangeChanged(bool oldValue, bool newValue)
-        {
-        }
+        protected virtual void OnRestartTransitionOnContentChangeChanged(bool oldValue, bool newValue) {}
 
         public override void OnApplyTemplate()
         {
             if (IsTransitioning)
-            {
                 AbortTransition();
-            }
 
             if (CustomVisualStates != null && CustomVisualStates.Any())
             {
@@ -225,9 +213,7 @@ namespace SteamFriendsManager.Utility
                 if (presentationGroup != null)
                 {
                     foreach (var state in CustomVisualStates)
-                    {
                         presentationGroup.States.Add(state);
-                    }
                 }
             }
 
@@ -241,8 +227,10 @@ namespace SteamFriendsManager.Utility
             if (CurrentContentPresentationSite != null)
             {
                 if (ContentTemplateSelector != null)
+                {
                     CurrentContentPresentationSite.ContentTemplate = ContentTemplateSelector.SelectTemplate(Content,
                         this);
+                }
                 else
                     CurrentContentPresentationSite.ContentTemplate = ContentTemplate;
 
@@ -278,9 +266,7 @@ namespace SteamFriendsManager.Utility
             if (CurrentContentPresentationSite != null && PreviousContentPresentationSite != null)
             {
                 if (RestartTransitionOnContentChange)
-                {
                     CurrentTransition.Completed -= OnTransitionCompleted;
-                }
 
                 if (ContentTemplateSelector != null)
                 {
@@ -297,9 +283,7 @@ namespace SteamFriendsManager.Utility
                 if (!IsTransitioning || RestartTransitionOnContentChange)
                 {
                     if (RestartTransitionOnContentChange)
-                    {
                         CurrentTransition.Completed += OnTransitionCompleted;
-                    }
                     IsTransitioning = true;
                     VisualStateManager.GoToState(this, NormalState, false);
                     VisualStateManager.GoToState(this, GetTransitionName(Transition), true);
@@ -316,15 +300,11 @@ namespace SteamFriendsManager.Utility
             if (CurrentContentPresentationSite != null && PreviousContentPresentationSite != null)
             {
                 if (RestartTransitionOnContentChange)
-                {
                     CurrentTransition.Completed -= OnTransitionCompleted;
-                }
                 if (!IsTransitioning || RestartTransitionOnContentChange)
                 {
                     if (RestartTransitionOnContentChange)
-                    {
                         CurrentTransition.Completed += OnTransitionCompleted;
-                    }
                     IsTransitioning = true;
                     VisualStateManager.GoToState(this, NormalState, false);
                     VisualStateManager.GoToState(this, GetTransitionName(Transition), true);
@@ -338,9 +318,7 @@ namespace SteamFriendsManager.Utility
 
             var handler = TransitionCompleted;
             if (handler != null)
-            {
                 handler(this, new RoutedEventArgs());
-            }
         }
 
         public void AbortTransition()
@@ -349,9 +327,7 @@ namespace SteamFriendsManager.Utility
             VisualStateManager.GoToState(this, NormalState, false);
             IsTransitioning = false;
             if (PreviousContentPresentationSite != null)
-            {
                 PreviousContentPresentationSite.Content = null;
-            }
         }
 
         private Storyboard GetStoryboard(TransitionType newTransition)

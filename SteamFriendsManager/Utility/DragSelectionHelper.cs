@@ -70,9 +70,7 @@ namespace SteamFriendsManager.Utility
                 return;
 
             if (e.Key == Key.LeftShift || e.Key == Key.RightShift)
-            {
                 SetIsDragSelectionEnabled(listBox, false);
-            }
         }
 
         private static void listBox_PreviewKeyUp(object sender, KeyEventArgs e)
@@ -82,9 +80,7 @@ namespace SteamFriendsManager.Utility
                 return;
 
             if (e.Key == Key.LeftShift || e.Key == Key.RightShift)
-            {
                 SetIsDragSelectionEnabled(listBox, true);
-            }
         }
 
         private static void listBox_PreviewMouseRightButtonDown(object sender, MouseButtonEventArgs e)
@@ -147,9 +143,7 @@ namespace SteamFriendsManager.Utility
             if (!GetIsDragClickStarted(listBoxItem)) return;
 
             if (GetIsDragSelecting(listBoxItem))
-            {
                 listBoxItem.IsSelected = true;
-            }
         }
 
         #endregion IsDragSelectingProperty
@@ -189,9 +183,7 @@ namespace SteamFriendsManager.Utility
             {
                 var scrollBar = element as ScrollBar;
                 if (scrollBar != null)
-                {
                     return;
-                }
                 element = VisualTreeHelper.GetParent(element);
             }
 

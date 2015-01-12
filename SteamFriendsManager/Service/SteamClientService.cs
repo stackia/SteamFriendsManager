@@ -77,7 +77,9 @@ namespace SteamFriendsManager.Service
             if (disposing)
             {
                 _callbackHandlerCancellationTokenSource.Dispose();
+                _retryCountResetCancellationTokenSource.Dispose();
             }
+
             _disposed = true;
         }
 
@@ -109,13 +111,9 @@ namespace SteamFriendsManager.Service
                     callback.Handle<SteamClient.DisconnectedCallback>(cb =>
                     {
                         if (_disconnectTaskCompletionSource != null && !_disconnectTaskCompletionSource.Task.IsCompleted)
-                        {
                             _disconnectTaskCompletionSource.TrySetResult(cb);
-                        }
                         else if (ReconnectOnDisconnected)
-                        {
                             TryReconnect();
-                        }
                     });
 
                     callback.Handle<SteamUser.LoggedOnCallback>(cb =>
@@ -196,9 +194,7 @@ namespace SteamFriendsManager.Service
                         DispatcherHelper.CheckBeginInvokeOnUI(() =>
                         {
                             if (!cb.Incremental)
-                            {
                                 Friends.Clear();
-                            }
 
                             foreach (var friend in from friendRaw in cb.FriendList
                                 where friendRaw.SteamID.IsIndividualAccount
@@ -210,9 +206,7 @@ namespace SteamFriendsManager.Service
                                         Friends.Remove(friend);
                                 }
                                 else
-                                {
                                     Friends.Add(friend);
-                                }
                             }
                         });
                     });
@@ -233,9 +227,7 @@ namespace SteamFriendsManager.Service
                 // Unexceptedly disconnect, try reconnect.
                 if (_retryCountResetCancellationTokenSource != null &&
                     !_retryCountResetCancellationTokenSource.IsCancellationRequested)
-                {
                     _retryCountResetCancellationTokenSource.Cancel();
-                }
                 Task.Run(async () =>
                 {
                     try
@@ -272,9 +264,7 @@ namespace SteamFriendsManager.Service
                         await DisconnectAsync();
                         break;
                     }
-                    catch (TimeoutException)
-                    {
-                    }
+                    catch (TimeoutException) {}
                 }
             }
 
@@ -292,9 +282,7 @@ namespace SteamFriendsManager.Service
             Task.Run(() =>
             {
                 if (_applicationSettingsService.Settings.PreferedCmServers == null)
-                {
                     _steamClient.Connect();
-                }
                 else
                 {
                     var cmServer =
@@ -324,8 +312,10 @@ namespace SteamFriendsManager.Service
                 _lastLoginDetails = logOnDetails;
                 if (_applicationSettingsService.Settings.SentryHashStore != null &&
                     _applicationSettingsService.Settings.SentryHashStore.ContainsKey(logOnDetails.Username))
+                {
                     logOnDetails.SentryFileHash =
                         _applicationSettingsService.Settings.SentryHashStore[logOnDetails.Username];
+                }
                 _steamUser.LogOn(logOnDetails);
             });
             ThrowIfTimeout(_loginTaskCompletionSource);
