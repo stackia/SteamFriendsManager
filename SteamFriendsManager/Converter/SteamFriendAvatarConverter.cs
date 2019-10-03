@@ -4,7 +4,7 @@ using System.Windows.Data;
 
 namespace SteamFriendsManager.Converter
 {
-    [ValueConversion(typeof (byte[]), typeof (string))]
+    [ValueConversion(typeof(byte[]), typeof(string))]
     public class SteamFriendAvatarConverter : IValueConverter
     {
         private const string DefaultAvatar =

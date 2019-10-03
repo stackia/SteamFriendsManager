@@ -5,7 +5,7 @@ using SteamKit2;
 
 namespace SteamFriendsManager.Converter
 {
-    [ValueConversion(typeof(EPersonaState), typeof (string))]
+    [ValueConversion(typeof(EPersonaState), typeof(string))]
     public class SteamPersonaStateDisplayNameConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)

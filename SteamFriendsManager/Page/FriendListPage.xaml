@@ -201,7 +201,7 @@
                 <i:GoToStateAction StateName="SelectedOne" />
             </i:DataTrigger>
             <i:DataTrigger Binding="{Binding SelectedItems.Count, ElementName=FriendListView, Mode=OneWay}" Value="1"
-                            Comparison="GreaterThan">
+                           Comparison="GreaterThan">
                 <i:GoToStateAction StateName="SelectedMany" />
             </i:DataTrigger>
             <i:EventTrigger>
@@ -322,15 +322,15 @@
                 <i:Interaction.Triggers>
                     <i:EventTrigger EventName="Click">
                         <i:ChangePropertyAction TargetName="SwitchOnlineStateContextMenu"
-                                                 PropertyName="PlacementTarget"
-                                                 Value="{Binding ElementName=SwitchStateButton}" />
+                                                PropertyName="PlacementTarget"
+                                                Value="{Binding ElementName=SwitchStateButton}" />
                         <i:ChangePropertyAction TargetName="SwitchOnlineStateContextMenu" PropertyName="Placement">
                             <i:ChangePropertyAction.Value>
                                 <PlacementMode>Bottom</PlacementMode>
                             </i:ChangePropertyAction.Value>
                         </i:ChangePropertyAction>
                         <i:ChangePropertyAction TargetName="SwitchOnlineStateContextMenu" PropertyName="IsOpen"
-                                                 Value="True" />
+                                                Value="True" />
                     </i:EventTrigger>
                 </i:Interaction.Triggers>
                 <Button.ContextMenu>
@@ -476,10 +476,11 @@
                                    Foreground="{Binding PersonaStateColor, Mode=OneWay}"
                                    FontFamily="Microsoft YaHei UI" VerticalAlignment="Center" FontSize="16"
                                    ToolTip="{Binding PersonaName, Mode=OneWay}" />
-                            <Label Content="{Binding PersonaState, Mode=OneWay, Converter={StaticResource SteamPersonaStateDisplayNameConverter}}"
-                                   FontFamily="Microsoft YaHei UI" VerticalAlignment="Center" FontSize="12"
-                                   Foreground="{Binding PersonaStateColor, Mode=OneWay}"
-                                   ToolTip="{Binding PersonaState, Mode=OneWay, Converter={StaticResource SteamPersonaStateDisplayNameConverter}}" />
+                            <Label
+                                Content="{Binding PersonaState, Mode=OneWay, Converter={StaticResource SteamPersonaStateDisplayNameConverter}}"
+                                FontFamily="Microsoft YaHei UI" VerticalAlignment="Center" FontSize="12"
+                                Foreground="{Binding PersonaStateColor, Mode=OneWay}"
+                                ToolTip="{Binding PersonaState, Mode=OneWay, Converter={StaticResource SteamPersonaStateDisplayNameConverter}}" />
                         </StackPanel>
                     </Grid>
                 </DataTemplate>

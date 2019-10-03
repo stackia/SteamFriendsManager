@@ -10,6 +10,8 @@ namespace SteamFriendsManager.ViewModel
 {
     public class LoginPageViewModel : ViewModelBase
     {
+        private readonly ApplicationSettingsService _applicationSettingsService;
+        private readonly SteamClientService _steamClientService;
         private bool _clearPageHistoryOnNextTryLogin;
         private bool _isLoading;
         private RelayCommand _login;
@@ -17,8 +19,6 @@ namespace SteamFriendsManager.ViewModel
         private string _password;
         private bool _shouldRememberAccount;
         private string _username;
-        private readonly ApplicationSettingsService _applicationSettingsService;
-        private readonly SteamClientService _steamClientService;
 
         public LoginPageViewModel(SteamClientService steamClientService,
             ApplicationSettingsService applicationSettingsService)
@@ -120,7 +120,6 @@ namespace SteamFriendsManager.ViewModel
                         }
 
                         while (!stopTrying)
-                        {
                             try
                             {
                                 if (_clearPageHistoryOnNextTryLogin)
@@ -158,7 +157,8 @@ namespace SteamFriendsManager.ViewModel
                                 switch (result.Result)
                                 {
                                     case EResult.AlreadyLoggedInElsewhere:
-                                        MessengerInstance.Send(new ShowMessageDialogMessage("登录失败", "你已经在其他地方登录了这个帐号。"));
+                                        MessengerInstance.Send(
+                                            new ShowMessageDialogMessage("登录失败", "你已经在其他地方登录了这个帐号。"));
                                         stopTrying = true;
                                         break;
 
@@ -212,6 +212,7 @@ namespace SteamFriendsManager.ViewModel
                                                 }));
                                             Monitor.Wait(authCodeInputLock);
                                         }
+
                                         break;
 
                                     case EResult.OK:
@@ -241,8 +242,10 @@ namespace SteamFriendsManager.ViewModel
                                         _applicationSettingsService.Settings.LastUsername = null;
                                         _applicationSettingsService.Settings.LastPassword = null;
                                     }
+
                                     await _applicationSettingsService.SaveAsync();
-                                    MessengerInstance.Send(new SwitchPageMessage(SwitchPageMessage.Page.FriendList, true));
+                                    MessengerInstance.Send(new SwitchPageMessage(SwitchPageMessage.Page.FriendList,
+                                        true));
                                 }
                                 else
                                 {
@@ -252,6 +255,7 @@ namespace SteamFriendsManager.ViewModel
                                         _applicationSettingsService.Settings.LastUsername = null;
                                         _applicationSettingsService.Settings.LastPassword = null;
                                     }
+
                                     await _applicationSettingsService.SaveAsync();
                                 }
                             }
@@ -260,7 +264,7 @@ namespace SteamFriendsManager.ViewModel
                                 MessengerInstance.Send(new ShowMessageDialogMessage("登录失败", "连接超时，请重试。"));
                                 stopTrying = true;
                             }
-                        }
+
                         IsLoading = false;
                     });
                 }));

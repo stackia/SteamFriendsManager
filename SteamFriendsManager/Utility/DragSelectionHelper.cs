@@ -21,7 +21,7 @@ namespace SteamFriendsManager.Utility
         }
 
         public static readonly DependencyProperty IsDragSelectionEnabledProperty =
-            DependencyProperty.RegisterAttached("IsDragSelectingEnabled", typeof (bool), typeof (DragSelectionHelper),
+            DependencyProperty.RegisterAttached("IsDragSelectingEnabled", typeof(bool), typeof(DragSelectionHelper),
                 new UIPropertyMetadata(false, IsDragSelectingEnabledPropertyChanged));
 
         private static void IsDragSelectingEnabledPropertyChanged(DependencyObject o,
@@ -130,7 +130,7 @@ namespace SteamFriendsManager.Utility
         }
 
         public static readonly DependencyProperty IsDragSelectingProperty =
-            DependencyProperty.RegisterAttached("IsDragSelecting", typeof (bool), typeof (DragSelectionHelper),
+            DependencyProperty.RegisterAttached("IsDragSelecting", typeof(bool), typeof(DragSelectionHelper),
                 new UIPropertyMetadata(false, IsDragSelectingPropertyChanged));
 
         private static void IsDragSelectingPropertyChanged(DependencyObject o, DependencyPropertyChangedEventArgs e)
@@ -161,10 +161,11 @@ namespace SteamFriendsManager.Utility
         }
 
         public static readonly DependencyProperty IsDragClickStartedProperty =
-            DependencyProperty.RegisterAttached("IsDragClickStarted", typeof (bool), typeof (DragSelectionHelper),
+            DependencyProperty.RegisterAttached("IsDragClickStarted", typeof(bool), typeof(DragSelectionHelper),
                 new FrameworkPropertyMetadata(false, IsDragClickStartedPropertyChanged) {Inherits = true});
 
-        private static void IsDragClickStartedPropertyChanged(DependencyObject obj, DependencyPropertyChangedEventArgs e)
+        private static void IsDragClickStartedPropertyChanged(DependencyObject obj,
+            DependencyPropertyChangedEventArgs e)
         {
             var listBox = obj as ListBox;
 

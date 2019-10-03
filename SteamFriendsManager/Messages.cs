@@ -28,13 +28,13 @@ namespace SteamFriendsManager
             switch (pageEnum)
             {
                 case Page.Login:
-                    return typeof (LoginPage);
+                    return typeof(LoginPage);
 
                 case Page.Welcome:
-                    return typeof (WelcomePage);
+                    return typeof(WelcomePage);
 
                 case Page.FriendList:
-                    return typeof (FriendListPage);
+                    return typeof(FriendListPage);
 
                 default:
                     throw new ArgumentOutOfRangeException(nameof(pageEnum));
@@ -42,13 +42,21 @@ namespace SteamFriendsManager
         }
     }
 
-    internal class ClearPageHistoryMessage : MessageBase {}
+    internal class ClearPageHistoryMessage : MessageBase
+    {
+    }
 
-    internal class ClearPageHistoryOnNextTryLoginMessage : MessageBase {}
+    internal class ClearPageHistoryOnNextTryLoginMessage : MessageBase
+    {
+    }
 
-    internal class LogoutOnNextTryLoginMessage : MessageBase {}
+    internal class LogoutOnNextTryLoginMessage : MessageBase
+    {
+    }
 
-    internal class ReconnectFailedMessage : MessageBase {}
+    internal class ReconnectFailedMessage : MessageBase
+    {
+    }
 
     internal interface IMessageDialogMessage
     {
@@ -72,7 +80,9 @@ namespace SteamFriendsManager
         IMessageDialogMessage
     {
         public ShowMessageDialogMessageWithCallback(string title, string message, Action<MessageDialogResult> callback)
-            : this(title, message, MessageDialogStyle.Affirmative, callback) {}
+            : this(title, message, MessageDialogStyle.Affirmative, callback)
+        {
+        }
 
         public ShowMessageDialogMessageWithCallback(string title, string message, MessageDialogStyle style,
             Action<MessageDialogResult> callback)
@@ -109,7 +119,11 @@ namespace SteamFriendsManager
         public string Message { get; set; }
     }
 
-    internal class PersonaNameChangedMessage : MessageBase {}
+    internal class PersonaNameChangedMessage : MessageBase
+    {
+    }
 
-    internal class PersonaStateChangedMessage : MessageBase {}
+    internal class PersonaStateChangedMessage : MessageBase
+    {
+    }
 }

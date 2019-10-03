@@ -112,7 +112,7 @@
 
         <i:Interaction.Behaviors>
             <i:DataStateBehavior TrueState="Loading" FalseState="NotLoading"
-                                  Binding="{Binding IsLoading, Mode=OneWay}">
+                                 Binding="{Binding IsLoading, Mode=OneWay}">
                 <i:DataStateBehavior.Value>
                     <system:Boolean>True</system:Boolean>
                 </i:DataStateBehavior.Value>

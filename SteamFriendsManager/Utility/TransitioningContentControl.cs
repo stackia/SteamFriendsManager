@@ -75,13 +75,37 @@ namespace SteamFriendsManager.Utility
         private const string PreviousContentPresentationSitePartName = "PreviousContentPresentationSite";
         private const string CurrentContentPresentationSitePartName = "CurrentContentPresentationSite";
         public const TransitionType DefaultTransitionState = TransitionType.Default;
+
+        public static readonly DependencyProperty IsTransitioningProperty =
+            DependencyProperty.Register("IsTransitioning", typeof(bool), typeof(TransitioningContentControl),
+                new PropertyMetadata(OnIsTransitioningPropertyChanged));
+
+        public static readonly DependencyProperty TransitionProperty = DependencyProperty.Register("Transition",
+            typeof(TransitionType), typeof(TransitioningContentControl),
+            new FrameworkPropertyMetadata(TransitionType.Default,
+                FrameworkPropertyMetadataOptions.AffectsArrange | FrameworkPropertyMetadataOptions.Inherits,
+                OnTransitionPropertyChanged));
+
+        public static readonly DependencyProperty RestartTransitionOnContentChangeProperty =
+            DependencyProperty.Register("RestartTransitionOnContentChange", typeof(bool),
+                typeof(TransitioningContentControl),
+                new PropertyMetadata(false, OnRestartTransitionOnContentChangePropertyChanged));
+
+        public static readonly DependencyProperty CustomVisualStatesProperty =
+            DependencyProperty.Register("CustomVisualStates", typeof(ObservableCollection<VisualState>),
+                typeof(TransitioningContentControl), new PropertyMetadata(null));
+
+        public static readonly DependencyProperty CustomVisualStatesNameProperty =
+            DependencyProperty.Register("CustomVisualStatesName", typeof(string), typeof(TransitioningContentControl),
+                new PropertyMetadata("CustomTransition"));
+
         private bool _allowIsTransitioningWrite;
         private Storyboard _currentTransition;
 
         public TransitioningContentControl()
         {
             CustomVisualStates = new ObservableCollection<VisualState>();
-            DefaultStyleKey = typeof (TransitioningContentControl);
+            DefaultStyleKey = typeof(TransitioningContentControl);
             PreviewMouseDown += (sender, args) => { args.Handled = IsTransitioning; };
             PreviewKeyDown += (sender, args) => { args.Handled = IsTransitioning; };
         }
@@ -190,7 +214,9 @@ namespace SteamFriendsManager.Utility
                 }
             }
             else
+            {
                 source.CurrentTransition = newStoryboard;
+            }
         }
 
         private static void OnRestartTransitionOnContentChangePropertyChanged(DependencyObject d,
@@ -200,7 +226,9 @@ namespace SteamFriendsManager.Utility
                 (bool) e.NewValue);
         }
 
-        protected virtual void OnRestartTransitionOnContentChangeChanged(bool oldValue, bool newValue) {}
+        protected virtual void OnRestartTransitionOnContentChangeChanged(bool oldValue, bool newValue)
+        {
+        }
 
         public override void OnApplyTemplate()
         {
@@ -211,10 +239,8 @@ namespace SteamFriendsManager.Utility
             {
                 var presentationGroup = VisualStates.TryGetVisualStateGroup(this, PresentationGroup);
                 if (presentationGroup != null)
-                {
                     foreach (var state in CustomVisualStates)
                         presentationGroup.States.Add(state);
-                }
             }
 
             base.OnApplyTemplate();
@@ -227,10 +253,8 @@ namespace SteamFriendsManager.Utility
             if (CurrentContentPresentationSite != null)
             {
                 if (ContentTemplateSelector != null)
-                {
                     CurrentContentPresentationSite.ContentTemplate = ContentTemplateSelector.SelectTemplate(Content,
                         this);
-                }
                 else
                     CurrentContentPresentationSite.ContentTemplate = ContentTemplate;
 
@@ -248,6 +272,7 @@ namespace SteamFriendsManager.Utility
 
                 throw new Exception($"'{invalidTransition}' Transition could not be found!");
             }
+
             VisualStateManager.GoToState(this, NormalState, false);
         }
 
@@ -342,6 +367,7 @@ namespace SteamFriendsManager.Utility
                     .Select(state => state.Storyboard)
                     .FirstOrDefault();
             }
+
             return newStoryboard;
         }
 
@@ -369,28 +395,5 @@ namespace SteamFriendsManager.Utility
                     return CustomVisualStatesName;
             }
         }
-
-        public static readonly DependencyProperty IsTransitioningProperty =
-            DependencyProperty.Register("IsTransitioning", typeof (bool), typeof (TransitioningContentControl),
-                new PropertyMetadata(OnIsTransitioningPropertyChanged));
-
-        public static readonly DependencyProperty TransitionProperty = DependencyProperty.Register("Transition",
-            typeof (TransitionType), typeof (TransitioningContentControl),
-            new FrameworkPropertyMetadata(TransitionType.Default,
-                FrameworkPropertyMetadataOptions.AffectsArrange | FrameworkPropertyMetadataOptions.Inherits,
-                OnTransitionPropertyChanged));
-
-        public static readonly DependencyProperty RestartTransitionOnContentChangeProperty =
-            DependencyProperty.Register("RestartTransitionOnContentChange", typeof (bool),
-                typeof (TransitioningContentControl),
-                new PropertyMetadata(false, OnRestartTransitionOnContentChangePropertyChanged));
-
-        public static readonly DependencyProperty CustomVisualStatesProperty =
-            DependencyProperty.Register("CustomVisualStates", typeof (ObservableCollection<VisualState>),
-                typeof (TransitioningContentControl), new PropertyMetadata(null));
-
-        public static readonly DependencyProperty CustomVisualStatesNameProperty =
-            DependencyProperty.Register("CustomVisualStatesName", typeof (string), typeof (TransitioningContentControl),
-                new PropertyMetadata("CustomTransition"));
     }
 }

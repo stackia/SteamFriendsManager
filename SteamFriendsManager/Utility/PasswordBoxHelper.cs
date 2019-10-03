@@ -5,6 +5,19 @@ namespace SteamFriendsManager.Utility
 {
     internal static class PasswordBoxHelper
     {
+        public static readonly DependencyProperty PasswordProperty =
+            DependencyProperty.RegisterAttached("Password",
+                typeof(string), typeof(PasswordBoxHelper),
+                new FrameworkPropertyMetadata(string.Empty, OnPasswordPropertyChanged));
+
+        public static readonly DependencyProperty AttachProperty =
+            DependencyProperty.RegisterAttached("Attach",
+                typeof(bool), typeof(PasswordBoxHelper), new PropertyMetadata(false, Attach));
+
+        private static readonly DependencyProperty IsUpdatingProperty =
+            DependencyProperty.RegisterAttached("IsUpdating", typeof(bool),
+                typeof(PasswordBoxHelper));
+
         public static void SetAttach(DependencyObject dp, bool value)
         {
             dp.SetValue(AttachProperty, value);
@@ -74,18 +87,5 @@ namespace SteamFriendsManager.Utility
                 SetIsUpdating(passwordBox, false);
             }
         }
-
-        public static readonly DependencyProperty PasswordProperty =
-            DependencyProperty.RegisterAttached("Password",
-                typeof (string), typeof (PasswordBoxHelper),
-                new FrameworkPropertyMetadata(string.Empty, OnPasswordPropertyChanged));
-
-        public static readonly DependencyProperty AttachProperty =
-            DependencyProperty.RegisterAttached("Attach",
-                typeof (bool), typeof (PasswordBoxHelper), new PropertyMetadata(false, Attach));
-
-        private static readonly DependencyProperty IsUpdatingProperty =
-            DependencyProperty.RegisterAttached("IsUpdating", typeof (bool),
-                typeof (PasswordBoxHelper));
     }
 }

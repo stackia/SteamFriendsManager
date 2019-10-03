@@ -7,10 +7,13 @@ namespace SteamFriendsManager.Utility
 {
     public class Image : System.Windows.Controls.Image
     {
+        public static readonly DependencyProperty ImageUrlProperty = DependencyProperty.Register("ImageUrl",
+            typeof(string), typeof(Image), new PropertyMetadata("", ImageUrlPropertyChanged));
+
         static Image()
         {
-            DefaultStyleKeyProperty.OverrideMetadata(typeof (Image),
-                new FrameworkPropertyMetadata(typeof (Image)));
+            DefaultStyleKeyProperty.OverrideMetadata(typeof(Image),
+                new FrameworkPropertyMetadata(typeof(Image)));
         }
 
         public string ImageUrl
@@ -34,8 +37,5 @@ namespace SteamFriendsManager.Utility
             bitmapImage.EndInit();
             cachedImage.Source = bitmapImage;
         }
-
-        public static readonly DependencyProperty ImageUrlProperty = DependencyProperty.Register("ImageUrl",
-            typeof (string), typeof (Image), new PropertyMetadata("", ImageUrlPropertyChanged));
     }
 }

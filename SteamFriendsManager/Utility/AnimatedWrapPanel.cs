@@ -11,7 +11,7 @@ namespace SteamFriendsManager.Utility
         //        typeof (int), typeof (AnimatedWrapPanel), new PropertyMetadata(700));
 
         public static readonly DependencyProperty ItemGapProperty = DependencyProperty.Register("ItemGap",
-            typeof (int), typeof (AnimatedWrapPanel), new PropertyMetadata(10));
+            typeof(int), typeof(AnimatedWrapPanel), new PropertyMetadata(10));
 
         //private TimeSpan _animationLength = TimeSpan.FromMilliseconds(200);
         //private bool _firstArrangement = true;

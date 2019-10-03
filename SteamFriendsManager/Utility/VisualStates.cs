@@ -10,7 +10,7 @@ namespace SteamFriendsManager.Utility
         private static FrameworkElement GetImplementationRoot(DependencyObject dependencyObject)
         {
             Debug.Assert(dependencyObject != null, "DependencyObject should not be null.");
-            return (VisualTreeHelper.GetChildrenCount(dependencyObject) == 1)
+            return VisualTreeHelper.GetChildrenCount(dependencyObject) == 1
                 ? VisualTreeHelper.GetChild(dependencyObject, 0) as FrameworkElement
                 : null;
         }
@@ -25,7 +25,7 @@ namespace SteamFriendsManager.Utility
 
             return
                 vsg?.OfType<VisualStateGroup>()
-                    .FirstOrDefault(group => string.CompareOrdinal(groupName, @group.Name) == 0);
+                    .FirstOrDefault(group => string.CompareOrdinal(groupName, group.Name) == 0);
         }
     }
 }

@@ -16,11 +16,11 @@ namespace SteamFriendsManager.ViewModel
 {
     public class MainWindowViewModel : ViewModelBase
     {
+        private readonly SteamClientService _steamClientService;
         private RelayCommand _checkForNewVersion;
         private object _currentPage;
         private RelayCommand _stopSteamService;
         private RelayCommand _switchBack;
-        private readonly SteamClientService _steamClientService;
 
         public MainWindowViewModel(SteamClientService steamClientService)
         {
@@ -41,7 +41,10 @@ namespace SteamFriendsManager.ViewModel
                         PageHistory.Push(CurrentPage);
                     }
                     else
+                    {
                         PageHistory.Push(CurrentPage);
+                    }
+
                     RaisePropertyChanged(() => SwitchBackButtonVisible);
                 });
             });
@@ -118,7 +121,6 @@ namespace SteamFriendsManager.ViewModel
                             dynamic versionMetadata = JsonConvert.DeserializeObject(await reader.ReadToEndAsync());
                             var version = Version.Parse(versionMetadata.LatestVersion.ToString());
                             if (version > Assembly.GetExecutingAssembly().GetName().Version)
-                            {
                                 MessengerInstance.Send(new ShowMessageDialogMessageWithCallback("更新提示",
                                     $"现在有新版（v{version as Version}）可用，是否要前往下载？",
                                     MessageDialogStyle.AffirmativeAndNegative,
@@ -129,10 +131,11 @@ namespace SteamFriendsManager.ViewModel
 
                                         Process.Start(versionMetadata.DownloadUrl.ToString());
                                     }));
-                            }
                         }
                     }
-                    catch (WebException) {}
+                    catch (WebException)
+                    {
+                    }
                 }));
             }
         }

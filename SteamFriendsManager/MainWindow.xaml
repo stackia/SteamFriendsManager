@@ -78,7 +78,7 @@
 
         <i:Interaction.Behaviors>
             <i:DataStateBehavior TrueState="SwitchBackButtonVisible" FalseState="SwitchBackButtonCollapsed"
-                                  Binding="{Binding SwitchBackButtonVisible, Mode=OneWay}">
+                                 Binding="{Binding SwitchBackButtonVisible, Mode=OneWay}">
                 <i:DataStateBehavior.Value>
                     <system:Boolean>True</system:Boolean>
                 </i:DataStateBehavior.Value>

@@ -14,6 +14,7 @@ namespace SteamFriendsManager.ViewModel
 {
     public class FriendListPageViewModel : ViewModelBase
     {
+        private readonly SteamClientService _steamClientService;
         private RelayCommand _addFriend;
         private RelayCommand _changePersonaName;
         private RelayCommand<IList> _removeFriend;
@@ -21,7 +22,6 @@ namespace SteamFriendsManager.ViewModel
         private RelayCommand<IList> _sendChatMessage;
         private RelayCommand _switchAccount;
         private RelayCommand<EPersonaState> _switchPersonaState;
-        private readonly SteamClientService _steamClientService;
 
         public FriendListPageViewModel(SteamClientService steamClientService)
         {
@@ -100,15 +100,11 @@ namespace SteamFriendsManager.ViewModel
                 RaisePropertyChanged(() => SearchText);
 
                 if (!string.IsNullOrEmpty(_searchText))
-                {
                     foreach (var friend in _steamClientService.Friends)
                         friend.Visible = friend.PersonaName.ToLower().Contains(_searchText.ToLower());
-                }
                 else
-                {
                     foreach (var friend in _steamClientService.Friends)
                         friend.Visible = true;
-                }
             }
         }
 

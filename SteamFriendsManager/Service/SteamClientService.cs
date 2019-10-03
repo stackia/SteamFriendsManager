@@ -6,11 +6,9 @@ using System.Globalization;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Windows.Data;
 using System.Windows.Media;
 using GalaSoft.MvvmLight.Messaging;
 using GalaSoft.MvvmLight.Threading;
-using SteamFriendsManager.Utility;
 using SteamKit2;
 using SteamKit2.Discovery;
 
@@ -18,6 +16,12 @@ namespace SteamFriendsManager.Service
 {
     public class SteamClientService : IDisposable
     {
+        private readonly ApplicationSettingsService _applicationSettingsService;
+        private readonly SteamClient _steamClient = new SteamClient();
+        private readonly SteamFriends _steamFriends;
+
+        private readonly SteamUser _steamUser;
+
         //private TaskCompletionSource<SteamUser.LoggedOffCallback> _logoutTaskCompletionSource;
         private TaskCompletionSource<SteamFriends.FriendAddedCallback> _addFriendTaskCompletionSource;
         private CancellationTokenSource _callbackHandlerCancellationTokenSource;
@@ -30,10 +34,6 @@ namespace SteamFriendsManager.Service
         private CancellationTokenSource _retryCountResetCancellationTokenSource;
         private TaskCompletionSource<SteamUser.AccountInfoCallback> _setPersonaNameTaskCompletionSource;
         private TaskCompletionSource<SteamFriends.PersonaStateCallback> _setPersonaStateTaskCompletionSource;
-        private readonly ApplicationSettingsService _applicationSettingsService;
-        private readonly SteamClient _steamClient = new SteamClient();
-        private readonly SteamFriends _steamFriends;
-        private readonly SteamUser _steamUser;
 
         public SteamClientService(ApplicationSettingsService applicationSettingsService)
         {
@@ -147,6 +147,7 @@ namespace SteamFriendsManager.Service
 
                         return;
                     }
+
                     var query = from f in Friends where f.SteamId.Equals(cb.FriendID) select f;
                     var friends = query as Friend[] ?? query.ToArray();
 
@@ -183,17 +184,17 @@ namespace SteamFriendsManager.Service
                             Friends.Clear();
 
                         foreach (var friend in from friendRaw in cb.FriendList
-                                               where friendRaw.SteamID.IsIndividualAccount
-                                               select new Friend(friendRaw.SteamID, _steamFriends))
-                        {
+                            where friendRaw.SteamID.IsIndividualAccount
+                            select new Friend(friendRaw.SteamID, _steamFriends))
                             if (Friends.Contains(friend))
                             {
                                 if (friend.Relationship == EFriendRelationship.None)
                                     Friends.Remove(friend);
                             }
                             else
+                            {
                                 Friends.Add(friend);
-                        }
+                            }
                     });
                 });
 
@@ -204,9 +205,7 @@ namespace SteamFriendsManager.Service
                 });
 
                 while (!_callbackHandlerCancellationTokenSource.IsCancellationRequested)
-                {
                     manager.RunWaitCallbacks(TimeSpan.FromMilliseconds(50));
-                }
             }, _callbackHandlerCancellationTokenSource.Token);
         }
 
@@ -245,18 +244,16 @@ namespace SteamFriendsManager.Service
         public async Task StopAsync()
         {
             if (_steamClient.IsConnected)
-            {
                 while (true)
-                {
                     try
                     {
                         await LogoutAsync(); // Not sure if it is of any use to logout here 
                         await DisconnectAsync();
                         break;
                     }
-                    catch (TimeoutException) {}
-                }
-            }
+                    catch (TimeoutException)
+                    {
+                    }
 
             _callbackHandlerCancellationTokenSource.Cancel();
         }
@@ -267,7 +264,9 @@ namespace SteamFriendsManager.Service
             Task.Run(() =>
             {
                 if (_applicationSettingsService.Settings.PreferredCmServers == null)
+                {
                     _steamClient.Connect();
+                }
                 else
                 {
                     var cmServer =
@@ -292,10 +291,8 @@ namespace SteamFriendsManager.Service
                 _lastLoginDetails = logOnDetails;
                 if (_applicationSettingsService.Settings.SentryHashStore != null &&
                     _applicationSettingsService.Settings.SentryHashStore.ContainsKey(logOnDetails.Username))
-                {
                     logOnDetails.SentryFileHash =
                         _applicationSettingsService.Settings.SentryHashStore[logOnDetails.Username];
-                }
                 _steamUser.LogOn(logOnDetails);
             });
             ThrowIfTimeout(_loginTaskCompletionSource);
@@ -414,7 +411,7 @@ namespace SteamFriendsManager.Service
             cts.Token.Register(() =>
             {
                 var trySetExceptionMethod = taskCompletionSource.GetType()
-                    .GetMethod("TrySetException", new[] { typeof(Exception) });
+                    .GetMethod("TrySetException", new[] {typeof(Exception)});
                 if (!(taskCompletionSource.GetType().GetProperty("Task")
                         ?.GetValue(taskCompletionSource) is Task task) || trySetExceptionMethod == null ||
                     task.IsCompleted) return;
@@ -426,8 +423,8 @@ namespace SteamFriendsManager.Service
 
         public class Friend : INotifyPropertyChanged
         {
-            private bool _visible;
             private readonly SteamFriends _steamFriends;
+            private bool _visible;
 
             public Friend(SteamID steamId, SteamFriends steamFriends)
             {
@@ -463,6 +460,7 @@ namespace SteamFriendsManager.Service
                         case EPersonaState.Busy:
                             return new SolidColorBrush(Color.FromRgb(66, 103, 119));
                     }
+
                     return new SolidColorBrush(Color.FromRgb(255, 255, 255));
                 }
             }
@@ -528,7 +526,7 @@ namespace SteamFriendsManager.Service
                 if (ReferenceEquals(a, b))
                     return true;
 
-                if ((object) a == null || ((object) b == null))
+                if ((object) a == null || (object) b == null)
                     return false;
 
                 return a.SteamId == b.SteamId;
