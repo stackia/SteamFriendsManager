@@ -113,7 +113,8 @@ namespace SteamFriendsManager.ViewModel
                                 if (result != MessageDialogResult.Affirmative)
                                     return;
 
-                                Process.Start(versionMetadata.DownloadUrl.ToString());
+                                Process.Start(new ProcessStartInfo(versionMetadata.DownloadUrl.ToString())
+                                    {UseShellExecute = true});
                             }));
                 }
                 catch (WebException)
