@@ -59,7 +59,7 @@ New BSD License
 > OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 
-  [1]: https://ci.appveyor.com/api/projects/status/275b2q8xv1jj8k9v?svg=true
+  [1]: https://ci.appveyor.com/api/projects/status/jc602cxpc3ook962?svg=true
   [2]: https://ci.appveyor.com/project/stackia/steamfriendsmanager
   [3]: http://www.microsoft.com/en-us/download/details.aspx?id=42642
   [4]: https://github.com/stackia/SteamFriendsManager/releases
