@@ -41,7 +41,7 @@ namespace SteamFriendsManager.ViewModel
 
         public bool ShouldRememberAccount
         {
-            get { return _shouldRememberAccount; }
+            get => _shouldRememberAccount;
             set
             {
                 if (_shouldRememberAccount == value)
@@ -54,7 +54,7 @@ namespace SteamFriendsManager.ViewModel
 
         public string Username
         {
-            get { return _username; }
+            get => _username;
             set
             {
                 if (_username == value)
@@ -67,7 +67,7 @@ namespace SteamFriendsManager.ViewModel
 
         public string Password
         {
-            get { return _password; }
+            get => _password;
             set
             {
                 if (_password == value)
@@ -80,7 +80,7 @@ namespace SteamFriendsManager.ViewModel
 
         public bool IsLoading
         {
-            get { return _isLoading; }
+            get => _isLoading;
             set
             {
                 if (_isLoading == value)
@@ -102,6 +102,7 @@ namespace SteamFriendsManager.ViewModel
                         var stopTrying = false;
                         var success = false;
                         string authCode = null;
+                        string twoFactorCode = null;
                         IsLoading = true;
 
                         if (string.IsNullOrWhiteSpace(Username))
@@ -148,10 +149,12 @@ namespace SteamFriendsManager.ViewModel
                                 {
                                     Username = Username,
                                     Password = Password,
-                                    AuthCode = authCode
+                                    AuthCode = authCode,
+                                    TwoFactorCode = twoFactorCode
                                 });
 
                                 var authCodeInputHint = "你的 Steam 帐号开启了 Steam 令牌，验证码已发往你的邮箱。请输入验证码：";
+                                var twoFactorCodeInputHint = "你的 Steam 帐号开启了两步验证。请输入验证码：";
                                 switch (result.Result)
                                 {
                                     case EResult.AlreadyLoggedInElsewhere:
@@ -164,15 +167,37 @@ namespace SteamFriendsManager.ViewModel
                                         stopTrying = true;
                                         break;
 
+                                    case EResult.AccountLoginDeniedNeedTwoFactor:
+                                        var twoFactorCodeInputLock = new object();
+                                        lock (twoFactorCodeInputLock)
+                                        {
+                                            MessengerInstance.Send(new ShowInputDialogMessage("两步验证",
+                                                twoFactorCodeInputHint,
+                                                s =>
+                                                {
+                                                    if (s == null)
+                                                        stopTrying = true;
+
+                                                    twoFactorCode = s;
+                                                    lock (twoFactorCodeInputLock)
+                                                    {
+                                                        Monitor.Pulse(twoFactorCodeInputLock);
+                                                    }
+                                                }));
+                                            Monitor.Wait(twoFactorCodeInputLock);
+                                        }
+
+                                        break;
+
                                     case EResult.InvalidLoginAuthCode:
-                                        authCodeInputHint = "验证码错误，请重新输入：";
+                                        authCodeInputHint = "Steam 令牌验证码错误，请重新输入：";
                                         goto case EResult.AccountLogonDenied;
 
                                     case EResult.AccountLogonDenied:
                                         var authCodeInputLock = new object();
                                         lock (authCodeInputLock)
                                         {
-                                            MessengerInstance.Send(new ShowInputDialogMessage("两步验证",
+                                            MessengerInstance.Send(new ShowInputDialogMessage("Steam 令牌",
                                                 authCodeInputHint,
                                                 s =>
                                                 {

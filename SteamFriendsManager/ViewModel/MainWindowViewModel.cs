@@ -57,11 +57,11 @@ namespace SteamFriendsManager.ViewModel
             });
         }
 
-        private Stack PageHistory { get; set; }
+        private Stack PageHistory { get; }
 
         public object CurrentPage
         {
-            get { return _currentPage; }
+            get => _currentPage;
             set
             {
                 if (_currentPage == value)
@@ -73,10 +73,7 @@ namespace SteamFriendsManager.ViewModel
             }
         }
 
-        public bool SwitchBackButtonVisible
-        {
-            get { return PageHistory.Count > 1; }
-        }
+        public bool SwitchBackButtonVisible => PageHistory.Count > 1;
 
         public RelayCommand SwitchBack
         {
@@ -123,7 +120,7 @@ namespace SteamFriendsManager.ViewModel
                             if (version > Assembly.GetExecutingAssembly().GetName().Version)
                             {
                                 MessengerInstance.Send(new ShowMessageDialogMessageWithCallback("更新提示",
-                                    string.Format("现在有新版（v{0}）可用，是否要前往下载？", version as Version),
+                                    $"现在有新版（v{version as Version}）可用，是否要前往下载？",
                                     MessageDialogStyle.AffirmativeAndNegative,
                                     result =>
                                     {

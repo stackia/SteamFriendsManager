@@ -10,23 +10,20 @@ namespace SteamFriendsManager.Converter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            var stateString = value as string;
-            if (stateString == null)
+            if (!(value is string stateString))
                 throw new ArgumentException("Cannot convert null value.");
 
-            EPersonaState state;
-            if (Enum.TryParse(stateString, true, out state))
+            if (Enum.TryParse(stateString, true, out EPersonaState state))
                 return state;
             throw new ArgumentException("Cannot convert this value.");
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            var state = value as EPersonaState?;
-            if (state == null)
+            if (!(value is EPersonaState state))
                 throw new ArgumentException("Cannot convert back null value.");
 
-            return state.ToString();
+            return ((EPersonaState?) state).ToString();
         }
     }
 }

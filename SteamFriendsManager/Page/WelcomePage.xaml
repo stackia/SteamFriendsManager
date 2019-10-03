@@ -3,8 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
-             xmlns:ei="http://schemas.microsoft.com/expression/2010/interactions"
+             xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
              mc:Ignorable="d"
              DataContext="{Binding WelcomePage, Mode=OneTime, Source={StaticResource Locator}}"
              d:DesignHeight="600" d:DesignWidth="870">
@@ -46,7 +45,7 @@
                     <Hyperlink NavigateUri="http://steamcn.com/t117808-1-1">
                         <i:Interaction.Triggers>
                             <i:EventTrigger EventName="RequestNavigate">
-                                <ei:LaunchUriOrFileAction
+                                <i:LaunchUriOrFileAction
                                     Path="{Binding Path=NavigateUri, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Hyperlink}}}" />
                             </i:EventTrigger>
                         </i:Interaction.Triggers>

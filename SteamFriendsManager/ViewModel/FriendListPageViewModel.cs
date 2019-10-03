@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -9,7 +8,6 @@ using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using MahApps.Metro.Controls.Dialogs;
 using SteamFriendsManager.Service;
-using SteamFriendsManager.Utility;
 using SteamKit2;
 
 namespace SteamFriendsManager.ViewModel
@@ -49,15 +47,9 @@ namespace SteamFriendsManager.ViewModel
             });
         }
 
-        public IEnumerable<SteamClientService.Friend> Friends
-        {
-            get { return _steamClientService.Friends; }
-        }
+        public IEnumerable<SteamClientService.Friend> Friends => _steamClientService.Friends;
 
-        public string PersonaName
-        {
-            get { return _steamClientService.PersonaName; }
-        }
+        public string PersonaName => _steamClientService.PersonaName;
 
         public string PersonaState
         {
@@ -87,6 +79,9 @@ namespace SteamFriendsManager.ViewModel
                     case EPersonaState.LookingToPlay:
                         return "想玩游戏";
 
+                    case EPersonaState.Invisible:
+                        return "隐身";
+
                     default:
                         return state.ToString();
                 }
@@ -95,7 +90,7 @@ namespace SteamFriendsManager.ViewModel
 
         public string SearchText
         {
-            get { return _searchText; }
+            get => _searchText;
             set
             {
                 if (_searchText == value)
@@ -107,12 +102,12 @@ namespace SteamFriendsManager.ViewModel
                 if (!string.IsNullOrEmpty(_searchText))
                 {
                     foreach (var friend in _steamClientService.Friends)
-                        friend.Show = friend.PersonaName.ToLower().Contains(_searchText.ToLower());
+                        friend.Visible = friend.PersonaName.ToLower().Contains(_searchText.ToLower());
                 }
                 else
                 {
                     foreach (var friend in _steamClientService.Friends)
-                        friend.Show = true;
+                        friend.Visible = true;
                 }
             }
         }
@@ -193,20 +188,11 @@ namespace SteamFriendsManager.ViewModel
                         if (friend == null)
                             return;
 
-                        var uri = new Uri("steam:");
-                        if (uri.CheckSchemeExistance())
-                        {
-                            Process.Start(uri.GetSchemeExecutable(),
-                                string.Format("steam://friends/message/{0}", friend.SteamId.ConvertToUInt64()));
-                        }
-                        else
-                        {
-                            MessengerInstance.Send(new ShowInputDialogMessage("发送消息", "请输入内容：",
-                                s =>
-                                {
-                                    _steamClientService.SendChatMessageAsync(friend.SteamId, EChatEntryType.ChatMsg, s);
-                                }));
-                        }
+                        MessengerInstance.Send(new ShowInputDialogMessage("发送消息", "请输入内容：",
+                            s =>
+                            {
+                                _steamClientService.SendChatMessageAsync(friend.SteamId, EChatEntryType.ChatMsg, s);
+                            }));
                     }
                     else
                     {
@@ -219,7 +205,7 @@ namespace SteamFriendsManager.ViewModel
                             {
                                 var sendTasks = from friend in friends.OfType<SteamClientService.Friend>()
                                     select _steamClientService.SendChatMessageAsync(friend.SteamId,
-                                        EChatEntryType.ChatMsg, string.Format("{0} ♥", s));
+                                        EChatEntryType.ChatMsg, $"{s} ♥");
                                 try
                                 {
                                     Task.WaitAll(sendTasks.ToArray());
@@ -265,8 +251,7 @@ namespace SteamFriendsManager.ViewModel
                                 {
                                     if (Regex.IsMatch(s, @"^7656\d{13}$"))
                                     {
-                                        UInt64 steamId64;
-                                        UInt64.TryParse(s, out steamId64);
+                                        ulong.TryParse(s, out var steamId64);
                                         var steamId = new SteamID();
                                         steamId.SetFromUInt64(steamId64);
                                         result = await _steamClientService.AddFriendAsync(steamId64);
@@ -277,8 +262,7 @@ namespace SteamFriendsManager.ViewModel
                                         @"^http(?:s)?://steamcommunity.com/profiles/(7656\d{13})$");
                                     if (match.Success)
                                     {
-                                        UInt64 steamId64;
-                                        UInt64.TryParse(match.Groups[1].Value, out steamId64);
+                                        ulong.TryParse(match.Groups[1].Value, out var steamId64);
                                         var steamId = new SteamID();
                                         steamId.SetFromUInt64(steamId64);
                                         result = await _steamClientService.AddFriendAsync(steamId);
@@ -301,7 +285,7 @@ namespace SteamFriendsManager.ViewModel
                                 {
                                     case EResult.OK:
                                         MessengerInstance.Send(new ShowMessageDialogMessage("添加成功",
-                                            string.Format("你成功向 {0} 发出了好友请求。", result.PersonaName)));
+                                            $"你成功向 {result.PersonaName} 发出了好友请求。"));
                                         break;
 
                                     case EResult.DuplicateName:

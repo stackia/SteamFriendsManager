@@ -28,8 +28,8 @@ namespace SteamFriendsManager.Utility
 
         public int ItemGap
         {
-            get { return (int) GetValue(ItemGapProperty); }
-            set { SetValue(ItemGapProperty, value); }
+            get => (int) GetValue(ItemGapProperty);
+            set => SetValue(ItemGapProperty, value);
         }
 
         protected override Size MeasureOverride(Size availableSize)
@@ -73,7 +73,7 @@ namespace SteamFriendsManager.Utility
 
         protected override Size ArrangeOverride(Size finalSize)
         {
-            if (Children == null || Children.Count == 0)
+            if (Children.Count == 0)
                 return finalSize;
 
             double curX = 0, curY = 0, curLineHeight = 0;

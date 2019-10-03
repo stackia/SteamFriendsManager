@@ -5,8 +5,7 @@
     xmlns:system="clr-namespace:System;assembly=mscorlib"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
-    xmlns:ei="http://schemas.microsoft.com/expression/2010/interactions"
+    xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
     xmlns:utils="clr-namespace:SteamFriendsManager.Utility"
     mc:Ignorable="d"
     x:Class="SteamFriendsManager.MainWindow"
@@ -78,17 +77,17 @@
         </VisualStateManager.VisualStateGroups>
 
         <i:Interaction.Behaviors>
-            <ei:DataStateBehavior TrueState="SwitchBackButtonVisible" FalseState="SwitchBackButtonCollapsed"
+            <i:DataStateBehavior TrueState="SwitchBackButtonVisible" FalseState="SwitchBackButtonCollapsed"
                                   Binding="{Binding SwitchBackButtonVisible, Mode=OneWay}">
-                <ei:DataStateBehavior.Value>
+                <i:DataStateBehavior.Value>
                     <system:Boolean>True</system:Boolean>
-                </ei:DataStateBehavior.Value>
-            </ei:DataStateBehavior>
+                </i:DataStateBehavior.Value>
+            </i:DataStateBehavior>
         </i:Interaction.Behaviors>
 
         <i:Interaction.Triggers>
             <i:EventTrigger EventName="Loaded">
-                <ei:GoToStateAction StateName="SwitchBackButtonCollapsed" />
+                <i:GoToStateAction StateName="SwitchBackButtonCollapsed" />
                 <i:InvokeCommandAction Command="{Binding CheckForNewVersion, Mode=OneWay}" />
             </i:EventTrigger>
         </i:Interaction.Triggers>

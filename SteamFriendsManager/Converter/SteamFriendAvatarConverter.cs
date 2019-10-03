@@ -18,9 +18,7 @@ namespace SteamFriendsManager.Converter
             var avatarHash = BitConverter.ToString((byte[]) value).Replace("-", "").ToLower();
             return string.IsNullOrEmpty(avatarHash) || string.IsNullOrEmpty(avatarHash.Replace("0", ""))
                 ? DefaultAvatar
-                : string.Format(
-                    "http://cdn.akamai.steamstatic.com/steamcommunity/public/images/avatars/{0}/{1}_medium.jpg",
-                    avatarHash.Substring(0, 2), avatarHash);
+                : $"http://cdn.akamai.steamstatic.com/steamcommunity/public/images/avatars/{avatarHash.Substring(0, 2)}/{avatarHash}_medium.jpg";
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

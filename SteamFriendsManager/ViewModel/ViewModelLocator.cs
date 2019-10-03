@@ -12,8 +12,8 @@
   See http://www.galasoft.ch/mvvm
 */
 
+using CommonServiceLocator;
 using GalaSoft.MvvmLight.Ioc;
-using Microsoft.Practices.ServiceLocation;
 using SteamFriendsManager.Service;
 
 namespace SteamFriendsManager.ViewModel
@@ -39,24 +39,12 @@ namespace SteamFriendsManager.ViewModel
             });
         }
 
-        public MainWindowViewModel MainWindow
-        {
-            get { return ServiceLocator.Current.GetInstance<MainWindowViewModel>(); }
-        }
+        public MainWindowViewModel MainWindow => ServiceLocator.Current.GetInstance<MainWindowViewModel>();
 
-        public WelcomePageViewModel WelcomePage
-        {
-            get { return ServiceLocator.Current.GetInstance<WelcomePageViewModel>(); }
-        }
+        public WelcomePageViewModel WelcomePage => ServiceLocator.Current.GetInstance<WelcomePageViewModel>();
 
-        public LoginPageViewModel LoginPage
-        {
-            get { return ServiceLocator.Current.GetInstance<LoginPageViewModel>(); }
-        }
+        public LoginPageViewModel LoginPage => ServiceLocator.Current.GetInstance<LoginPageViewModel>();
 
-        public FriendListPageViewModel FriendListPage
-        {
-            get { return ServiceLocator.Current.GetInstance<FriendListPageViewModel>(); }
-        }
+        public FriendListPageViewModel FriendListPage => ServiceLocator.Current.GetInstance<FriendListPageViewModel>();
     }
 }

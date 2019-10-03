@@ -22,11 +22,9 @@ namespace SteamFriendsManager.Utility
                 return null;
 
             var vsg = VisualStateManager.GetVisualStateGroups(root);
-            if (vsg == null)
-                return null;
 
             return
-                vsg.OfType<VisualStateGroup>()
+                vsg?.OfType<VisualStateGroup>()
                     .FirstOrDefault(group => string.CompareOrdinal(groupName, @group.Name) == 0);
         }
     }

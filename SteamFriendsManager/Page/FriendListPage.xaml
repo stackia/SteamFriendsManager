@@ -3,8 +3,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
-    xmlns:ei="http://schemas.microsoft.com/expression/2010/interactions"
+    xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
     xmlns:metro="http://metro.mahapps.com/winfx/xaml/controls"
     xmlns:utils="clr-namespace:SteamFriendsManager.Utility"
     x:Class="SteamFriendsManager.Page.FriendListPage"
@@ -195,18 +194,18 @@
             </VisualStateGroup>
         </VisualStateManager.VisualStateGroups>
         <i:Interaction.Triggers>
-            <ei:DataTrigger Binding="{Binding SelectedItems.Count, ElementName=FriendListView, Mode=OneWay}" Value="0">
-                <ei:GoToStateAction StateName="SelectedNone" />
-            </ei:DataTrigger>
-            <ei:DataTrigger Binding="{Binding SelectedItems.Count, ElementName=FriendListView, Mode=OneWay}" Value="1">
-                <ei:GoToStateAction StateName="SelectedOne" />
-            </ei:DataTrigger>
-            <ei:DataTrigger Binding="{Binding SelectedItems.Count, ElementName=FriendListView, Mode=OneWay}" Value="1"
+            <i:DataTrigger Binding="{Binding SelectedItems.Count, ElementName=FriendListView, Mode=OneWay}" Value="0">
+                <i:GoToStateAction StateName="SelectedNone" />
+            </i:DataTrigger>
+            <i:DataTrigger Binding="{Binding SelectedItems.Count, ElementName=FriendListView, Mode=OneWay}" Value="1">
+                <i:GoToStateAction StateName="SelectedOne" />
+            </i:DataTrigger>
+            <i:DataTrigger Binding="{Binding SelectedItems.Count, ElementName=FriendListView, Mode=OneWay}" Value="1"
                             Comparison="GreaterThan">
-                <ei:GoToStateAction StateName="SelectedMany" />
-            </ei:DataTrigger>
+                <i:GoToStateAction StateName="SelectedMany" />
+            </i:DataTrigger>
             <i:EventTrigger>
-                <ei:GoToStateAction StateName="SelectedNone" />
+                <i:GoToStateAction StateName="SelectedNone" />
             </i:EventTrigger>
         </i:Interaction.Triggers>
         <Grid.RowDefinitions>
@@ -322,15 +321,15 @@
                     ContextMenuService.Placement="Bottom">
                 <i:Interaction.Triggers>
                     <i:EventTrigger EventName="Click">
-                        <ei:ChangePropertyAction TargetName="SwitchOnlineStateContextMenu"
+                        <i:ChangePropertyAction TargetName="SwitchOnlineStateContextMenu"
                                                  PropertyName="PlacementTarget"
                                                  Value="{Binding ElementName=SwitchStateButton}" />
-                        <ei:ChangePropertyAction TargetName="SwitchOnlineStateContextMenu" PropertyName="Placement">
-                            <ei:ChangePropertyAction.Value>
+                        <i:ChangePropertyAction TargetName="SwitchOnlineStateContextMenu" PropertyName="Placement">
+                            <i:ChangePropertyAction.Value>
                                 <PlacementMode>Bottom</PlacementMode>
-                            </ei:ChangePropertyAction.Value>
-                        </ei:ChangePropertyAction>
-                        <ei:ChangePropertyAction TargetName="SwitchOnlineStateContextMenu" PropertyName="IsOpen"
+                            </i:ChangePropertyAction.Value>
+                        </i:ChangePropertyAction>
+                        <i:ChangePropertyAction TargetName="SwitchOnlineStateContextMenu" PropertyName="IsOpen"
                                                  Value="True" />
                     </i:EventTrigger>
                 </i:Interaction.Triggers>
@@ -338,6 +337,8 @@
                     <ContextMenu x:Name="SwitchOnlineStateContextMenu">
                         <MenuItem Header="在线" Command="{Binding SwitchPersonaState, Mode=OneWay}"
                                   CommandParameter="{Binding Source=Online, Mode=OneTime, Converter={StaticResource SteamPersonaStateConverter}}" />
+                        <MenuItem Header="隐身" Command="{Binding SwitchPersonaState, Mode=OneWay}"
+                                  CommandParameter="{Binding Source=Invisible, Mode=OneTime, Converter={StaticResource SteamPersonaStateConverter}}" />
                         <MenuItem Header="离开" Command="{Binding SwitchPersonaState, Mode=OneWay}"
                                   CommandParameter="{Binding Source=Away, Mode=OneTime, Converter={StaticResource SteamPersonaStateConverter}}" />
                         <MenuItem Header="忙碌" Command="{Binding SwitchPersonaState, Mode=OneWay}"
@@ -407,15 +408,15 @@
             </ListView.ItemsPanel>
             <ListView.ItemTemplate>
                 <DataTemplate>
-                    <Grid x:Name="grid" Height="50" Width="265"
-                          Visibility="{Binding Show, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}">
+                    <Grid x:Name="grid" Height="65" Width="265"
+                          Visibility="{Binding Visible, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}">
                         <!--<i:Interaction.Triggers>
                     		<i:EventTrigger>
-                    			<ei:GoToStateAction StateName="Visiable"/>
+                    			<ei:GoToStateAction StateName="Visible"/>
                     		</i:EventTrigger>
                     	</i:Interaction.Triggers>
                     	<i:Interaction.Behaviors>
-                    		<ei:DataStateBehavior Binding="{Binding Show, Mode=OneWay}" TrueState="Visiable" FalseState="Collapsed">
+                    		<ei:DataStateBehavior Binding="{Binding Visible, Mode=OneWay}" TrueState="Visible" FalseState="Collapsed">
                     			<ei:DataStateBehavior.Value>
                     				<system:Boolean>True</system:Boolean>
 								</ei:DataStateBehavior.Value>
@@ -424,7 +425,7 @@
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="VisibilityVisualStateGroup">
                                 <VisualStateGroup.Transitions>
-                                    <VisualTransition From="Visiable" GeneratedDuration="0:0:0.1" To="Collapsed">
+                                    <VisualTransition From="Visible" GeneratedDuration="0:0:0.1" To="Collapsed">
                                         <Storyboard>
                                             <DoubleAnimation Duration="0:0:0.1" To="0"
                                                              Storyboard.TargetProperty="(UIElement.Opacity)"
@@ -437,7 +438,7 @@
                                             </ObjectAnimationUsingKeyFrames>
                                         </Storyboard>
                                     </VisualTransition>
-                                    <VisualTransition From="Collapsed" GeneratedDuration="0:0:0.1" To="Visiable">
+                                    <VisualTransition From="Collapsed" GeneratedDuration="0:0:0.1" To="Visible">
                                         <Storyboard>
                                             <ObjectAnimationUsingKeyFrames
                                                 Storyboard.TargetProperty="(UIElement.Visibility)"
@@ -448,7 +449,7 @@
                                         </Storyboard>
                                     </VisualTransition>
                                 </VisualStateGroup.Transitions>
-                                <VisualState x:Name="Visiable" />
+                                <VisualState x:Name="Visible" />
                                 <VisualState x:Name="Collapsed">
                                     <Storyboard>
                                         <ObjectAnimationUsingKeyFrames
@@ -465,14 +466,21 @@
                             </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="50" />
+                            <ColumnDefinition Width="65" />
                             <ColumnDefinition />
                         </Grid.ColumnDefinitions>
                         <utils:Image Margin="3" Stretch="UniformToFill"
                                      ImageUrl="{Binding Avatar, Mode=OneWay, Converter={StaticResource SteamFriendAvatarConverter}}" />
-                        <Label Grid.Column="1" Grid.Row="0" Content="{Binding PersonaName, Mode=OneWay}"
-                               FontFamily="Microsoft YaHei UI" VerticalAlignment="Center" FontSize="16"
-                               ToolTip="{Binding PersonaName, Mode=OneWay}" />
+                        <StackPanel Grid.Column="1" Grid.Row="0" VerticalAlignment="Center">
+                            <Label Content="{Binding PersonaName, Mode=OneWay}"
+                                   Foreground="{Binding PersonaStateColor, Mode=OneWay}"
+                                   FontFamily="Microsoft YaHei UI" VerticalAlignment="Center" FontSize="16"
+                                   ToolTip="{Binding PersonaName, Mode=OneWay}" />
+                            <Label Content="{Binding PersonaState, Mode=OneWay, Converter={StaticResource SteamPersonaStateDisplayNameConverter}}"
+                                   FontFamily="Microsoft YaHei UI" VerticalAlignment="Center" FontSize="12"
+                                   Foreground="{Binding PersonaStateColor, Mode=OneWay}"
+                                   ToolTip="{Binding PersonaState, Mode=OneWay, Converter={StaticResource SteamPersonaStateDisplayNameConverter}}" />
+                        </StackPanel>
                     </Grid>
                 </DataTemplate>
             </ListView.ItemTemplate>

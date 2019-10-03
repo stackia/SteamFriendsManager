@@ -11,13 +11,13 @@ namespace SteamFriendsManager.Converter
         public object Convert(object value, Type targetType, object parameter,
             CultureInfo culture)
         {
-            return (bool) value ? Visibility.Visible : Visibility.Collapsed;
+            return (bool?) value ?? false ? Visibility.Visible : Visibility.Collapsed;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter,
             CultureInfo culture)
         {
-            return (Visibility) value == Visibility.Visible;
+            return ((Visibility?) value ?? Visibility.Collapsed) == Visibility.Visible;
         }
     }
 }

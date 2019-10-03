@@ -14,11 +14,9 @@ namespace SteamFriendsManager.Utility
 
         public static string GetSchemeExecutable(this Uri uri)
         {
-            var commandKey = Registry.ClassesRoot.OpenSubKey(string.Format(@"{0}\Shell\Open\Command", uri.Scheme));
-            if (commandKey == null)
-                return null;
+            var commandKey = Registry.ClassesRoot.OpenSubKey($@"{uri.Scheme}\Shell\Open\Command");
 
-            var command = commandKey.GetValue(null) as string;
+            var command = commandKey?.GetValue(null) as string;
             if (command == null)
                 return null;
 

@@ -15,8 +15,8 @@ namespace SteamFriendsManager.Utility
 
         public string ImageUrl
         {
-            get { return (string) GetValue(ImageUrlProperty); }
-            set { SetValue(ImageUrlProperty, value); }
+            get => (string) GetValue(ImageUrlProperty);
+            set => SetValue(ImageUrlProperty, value);
         }
 
         private static void ImageUrlPropertyChanged(DependencyObject obj, DependencyPropertyChangedEventArgs e)

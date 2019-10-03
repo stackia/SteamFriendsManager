@@ -91,8 +91,8 @@ namespace SteamFriendsManager.Utility
 
         public ObservableCollection<VisualState> CustomVisualStates
         {
-            get { return (ObservableCollection<VisualState>) GetValue(CustomVisualStatesProperty); }
-            set { SetValue(CustomVisualStatesProperty, value); }
+            get => (ObservableCollection<VisualState>) GetValue(CustomVisualStatesProperty);
+            set => SetValue(CustomVisualStatesProperty, value);
         }
 
         /// <summary>
@@ -100,8 +100,8 @@ namespace SteamFriendsManager.Utility
         /// </summary>
         public string CustomVisualStatesName
         {
-            get { return (string) GetValue(CustomVisualStatesNameProperty); }
-            set { SetValue(CustomVisualStatesNameProperty, value); }
+            get => (string) GetValue(CustomVisualStatesNameProperty);
+            set => SetValue(CustomVisualStatesNameProperty, value);
         }
 
         /// <summary>
@@ -109,7 +109,7 @@ namespace SteamFriendsManager.Utility
         /// </summary>
         public bool IsTransitioning
         {
-            get { return (bool) GetValue(IsTransitioningProperty); }
+            get => (bool) GetValue(IsTransitioningProperty);
             private set
             {
                 _allowIsTransitioningWrite = true;
@@ -120,19 +120,19 @@ namespace SteamFriendsManager.Utility
 
         public TransitionType Transition
         {
-            get { return (TransitionType) GetValue(TransitionProperty); }
-            set { SetValue(TransitionProperty, value); }
+            get => (TransitionType) GetValue(TransitionProperty);
+            set => SetValue(TransitionProperty, value);
         }
 
         public bool RestartTransitionOnContentChange
         {
-            get { return (bool) GetValue(RestartTransitionOnContentChangeProperty); }
-            set { SetValue(RestartTransitionOnContentChangeProperty, value); }
+            get => (bool) GetValue(RestartTransitionOnContentChangeProperty);
+            set => SetValue(RestartTransitionOnContentChangeProperty, value);
         }
 
         private Storyboard CurrentTransition
         {
-            get { return _currentTransition; }
+            get => _currentTransition;
             set
             {
                 // decouple event
@@ -246,7 +246,7 @@ namespace SteamFriendsManager.Utility
                 // revert to default
                 Transition = DefaultTransitionState;
 
-                throw new Exception(string.Format("'{0}' Transition could not be found!", invalidTransition));
+                throw new Exception($"'{invalidTransition}' Transition could not be found!");
             }
             VisualStateManager.GoToState(this, NormalState, false);
         }
@@ -317,8 +317,7 @@ namespace SteamFriendsManager.Utility
             AbortTransition();
 
             var handler = TransitionCompleted;
-            if (handler != null)
-                handler(this, new RoutedEventArgs());
+            handler?.Invoke(this, new RoutedEventArgs());
         }
 
         public void AbortTransition()

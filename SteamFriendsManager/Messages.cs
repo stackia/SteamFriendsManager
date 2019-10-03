@@ -20,8 +20,8 @@ namespace SteamFriendsManager
             ClearPageHistory = clearPageHistory;
         }
 
-        public Page TargetPage { get; private set; }
-        public bool ClearPageHistory { get; private set; }
+        public Page TargetPage { get; }
+        public bool ClearPageHistory { get; }
 
         public static Type GetPageType(Page pageEnum)
         {
@@ -37,7 +37,7 @@ namespace SteamFriendsManager
                     return typeof (FriendListPage);
 
                 default:
-                    throw new ArgumentOutOfRangeException("pageEnum");
+                    throw new ArgumentOutOfRangeException(nameof(pageEnum));
             }
         }
     }
@@ -83,7 +83,7 @@ namespace SteamFriendsManager
             Style = style;
         }
 
-        public MessageDialogStyle Style { get; set; }
+        public MessageDialogStyle Style { get; }
         public string Title { get; set; }
         public string Message { get; set; }
     }
@@ -104,7 +104,7 @@ namespace SteamFriendsManager
             DefaultText = defaultText;
         }
 
-        public string DefaultText { get; set; }
+        public string DefaultText { get; }
         public string Title { get; set; }
         public string Message { get; set; }
     }

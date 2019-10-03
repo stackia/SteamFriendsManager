@@ -10,13 +10,13 @@ namespace SteamFriendsManager.Converter
         public object Convert(object value, Type targetType, object parameter,
             CultureInfo culture)
         {
-            return !(bool) value;
+            return !(bool?) value ?? true;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter,
             CultureInfo culture)
         {
-            return !(bool) value;
+            return !(bool?) value ?? true;
         }
     }
 }

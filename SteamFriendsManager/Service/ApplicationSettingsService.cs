@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
+using GalaSoft.MvvmLight;
 using Newtonsoft.Json;
 
 namespace SteamFriendsManager.Service
@@ -9,9 +10,11 @@ namespace SteamFriendsManager.Service
     public class ApplicationSettingsService
     {
         private const string SettingsFileName = "settings.json";
+        private readonly object _saveLock = new object();
 
         public ApplicationSettingsService()
         {
+            if (ViewModelBase.IsInDesignModeStatic) return;
             Load();
         }
 
@@ -20,28 +23,30 @@ namespace SteamFriendsManager.Service
         public void Save()
         {
             FileStream settingsFileStream = null;
-            try
+            lock (_saveLock)
             {
-                settingsFileStream = File.Open(Path.Combine(Environment.CurrentDirectory, SettingsFileName),
-                    FileMode.Create, FileAccess.Write);
-                using (var streamWriter = new StreamWriter(settingsFileStream))
+                try
                 {
-                    settingsFileStream = null;
+                    settingsFileStream = File.Open(Path.Combine(Environment.CurrentDirectory, SettingsFileName),
+                        FileMode.Create, FileAccess.Write);
+                    using (var streamWriter = new StreamWriter(settingsFileStream))
+                    {
+                        settingsFileStream = null;
 
-                    var jsonSerializer = new JsonSerializer();
-                    jsonSerializer.Serialize(streamWriter, Settings);
+                        var jsonSerializer = new JsonSerializer();
+                        jsonSerializer.Serialize(streamWriter, Settings);
+                    }
                 }
-            }
-            finally
-            {
-                if (settingsFileStream != null)
-                    settingsFileStream.Dispose();
+                finally
+                {
+                    settingsFileStream?.Dispose();
+                }
             }
         }
 
         public Task SaveAsync()
         {
-            return Task.Run(() => Save());
+            return Task.Run(Save);
         }
 
         public void Load()
@@ -67,20 +72,18 @@ namespace SteamFriendsManager.Service
                 }
                 finally
                 {
-                    if (streamReader != null)
-                        streamReader.Dispose();
+                    streamReader?.Dispose();
                 }
             }
             finally
             {
-                if (settingsFileStream != null)
-                    settingsFileStream.Dispose();
+                settingsFileStream?.Dispose();
             }
         }
 
         public Task LoadAsync()
         {
-            return Task.Run(() => Load());
+            return Task.Run(Load);
         }
 
         public class ApplicationSettings
@@ -89,7 +92,7 @@ namespace SteamFriendsManager.Service
             public string LastUsername { get; set; }
             public string LastPassword { get; set; }
             public Dictionary<string, byte[]> SentryHashStore { get; set; }
-            public List<string> PreferedCmServers { get; set; }
+            public List<string> PreferredCmServers { get; set; }
         }
     }
 }
