@@ -29,13 +29,11 @@ namespace SteamFriendsManager.Service
                 {
                     settingsFileStream = File.Open(Path.Combine(Environment.CurrentDirectory, SettingsFileName),
                         FileMode.Create, FileAccess.Write);
-                    using (var streamWriter = new StreamWriter(settingsFileStream))
-                    {
-                        settingsFileStream = null;
+                    using var streamWriter = new StreamWriter(settingsFileStream);
+                    settingsFileStream = null;
 
-                        var jsonSerializer = new JsonSerializer();
-                        jsonSerializer.Serialize(streamWriter, Settings);
-                    }
+                    var jsonSerializer = new JsonSerializer();
+                    jsonSerializer.Serialize(streamWriter, Settings);
                 }
                 finally
                 {
@@ -61,14 +59,12 @@ namespace SteamFriendsManager.Service
                 {
                     streamReader = new StreamReader(settingsFileStream);
                     settingsFileStream = null;
-                    using (var jsonTextReader = new JsonTextReader(streamReader))
-                    {
-                        streamReader = null;
+                    using var jsonTextReader = new JsonTextReader(streamReader);
+                    streamReader = null;
 
-                        var jsonSerializer = new JsonSerializer();
-                        Settings = jsonSerializer.Deserialize<ApplicationSettings>(jsonTextReader) ??
-                                   new ApplicationSettings();
-                    }
+                    var jsonSerializer = new JsonSerializer();
+                    Settings = jsonSerializer.Deserialize<ApplicationSettings>(jsonTextReader) ??
+                               new ApplicationSettings();
                 }
                 finally
                 {

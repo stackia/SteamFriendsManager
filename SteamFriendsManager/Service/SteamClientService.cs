@@ -275,7 +275,7 @@ namespace SteamFriendsManager.Service
 
                     var ep = cmServer.Split(':');
                     var host = ep[0];
-                    var port = int.Parse(ep[ep.Length - 1], NumberStyles.None, NumberFormatInfo.CurrentInfo);
+                    var port = int.Parse(ep[^1], NumberStyles.None, NumberFormatInfo.CurrentInfo);
                     _steamClient.Connect(ServerRecord.CreateServer(host, port, ProtocolTypes.All));
                 }
             });
@@ -449,19 +449,16 @@ namespace SteamFriendsManager.Service
             {
                 get
                 {
-                    switch (PersonaState)
+                    return PersonaState switch
                     {
-                        case EPersonaState.Online:
-                        case EPersonaState.LookingToTrade:
-                        case EPersonaState.LookingToPlay:
-                            return new SolidColorBrush(Color.FromRgb(115, 209, 245));
-                        case EPersonaState.Away:
-                        case EPersonaState.Snooze:
-                        case EPersonaState.Busy:
-                            return new SolidColorBrush(Color.FromRgb(66, 103, 119));
-                    }
-
-                    return new SolidColorBrush(Color.FromRgb(255, 255, 255));
+                        EPersonaState.Online => new SolidColorBrush(Color.FromRgb(115, 209, 245)),
+                        EPersonaState.LookingToTrade => new SolidColorBrush(Color.FromRgb(115, 209, 245)),
+                        EPersonaState.LookingToPlay => new SolidColorBrush(Color.FromRgb(115, 209, 245)),
+                        EPersonaState.Away => new SolidColorBrush(Color.FromRgb(66, 103, 119)),
+                        EPersonaState.Snooze => new SolidColorBrush(Color.FromRgb(66, 103, 119)),
+                        EPersonaState.Busy => new SolidColorBrush(Color.FromRgb(66, 103, 119)),
+                        _ => new SolidColorBrush(Color.FromRgb(255, 255, 255))
+                    };
                 }
             }
 
@@ -526,7 +523,7 @@ namespace SteamFriendsManager.Service
                 if (ReferenceEquals(a, b))
                     return true;
 
-                if ((object) a == null || (object) b == null)
+                if (a is null || b is null)
                     return false;
 
                 return a.SteamId == b.SteamId;

@@ -25,20 +25,13 @@ namespace SteamFriendsManager
 
         public static Type GetPageType(Page pageEnum)
         {
-            switch (pageEnum)
+            return pageEnum switch
             {
-                case Page.Login:
-                    return typeof(LoginPage);
-
-                case Page.Welcome:
-                    return typeof(WelcomePage);
-
-                case Page.FriendList:
-                    return typeof(FriendListPage);
-
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(pageEnum));
-            }
+                Page.Login => typeof(LoginPage),
+                Page.Welcome => typeof(WelcomePage),
+                Page.FriendList => typeof(FriendListPage),
+                _ => throw new ArgumentOutOfRangeException(nameof(pageEnum))
+            };
         }
     }
 

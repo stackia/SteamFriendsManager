@@ -13,35 +13,18 @@ namespace SteamFriendsManager.Converter
             if (!(value is EPersonaState state))
                 throw new ArgumentException("Cannot convert null value.");
 
-            switch (state)
+            return state switch
             {
-                case EPersonaState.Offline:
-                    return "离线";
-
-                case EPersonaState.Online:
-                    return "在线";
-
-                case EPersonaState.Busy:
-                    return "忙碌";
-
-                case EPersonaState.Away:
-                    return "离开";
-
-                case EPersonaState.Snooze:
-                    return "打盹";
-
-                case EPersonaState.LookingToTrade:
-                    return "想交易";
-
-                case EPersonaState.LookingToPlay:
-                    return "想玩游戏";
-
-                case EPersonaState.Invisible:
-                    return "隐身";
-
-                default:
-                    return state.ToString();
-            }
+                EPersonaState.Offline => "离线",
+                EPersonaState.Online => "在线",
+                EPersonaState.Busy => "忙碌",
+                EPersonaState.Away => "离开",
+                EPersonaState.Snooze => "打盹",
+                EPersonaState.LookingToTrade => "想交易",
+                EPersonaState.LookingToPlay => "想玩游戏",
+                EPersonaState.Invisible => "隐身",
+                _ => state.ToString()
+            };
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

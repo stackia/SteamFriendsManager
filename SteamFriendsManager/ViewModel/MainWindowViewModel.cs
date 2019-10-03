@@ -78,66 +78,47 @@ namespace SteamFriendsManager.ViewModel
 
         public bool SwitchBackButtonVisible => PageHistory.Count > 1;
 
-        public RelayCommand SwitchBack
-        {
-            get
+        public RelayCommand SwitchBack =>
+            _switchBack ??= new RelayCommand(() =>
             {
-                return _switchBack ?? (_switchBack = new RelayCommand(() =>
+                if (PageHistory.Count <= 1)
+                    return;
+
+                PageHistory.Pop();
+                CurrentPage = PageHistory.Peek();
+                RaisePropertyChanged(() => SwitchBackButtonVisible);
+            });
+
+        public RelayCommand StopSteamService => _stopSteamService ??= new RelayCommand(async () => { await _steamClientService.StopAsync(); });
+
+        public RelayCommand CheckForNewVersion =>
+            _checkForNewVersion ??= new RelayCommand(async () =>
+            {
+                try
                 {
-                    if (PageHistory.Count <= 1)
+                    var request = WebRequest.Create("http://steamcn.com/sfm_version_metadata.json");
+                    var response = await request.GetResponseAsync();
+                    var responseStream = response.GetResponseStream();
+                    if (responseStream == null)
                         return;
+                    using var reader = new StreamReader(responseStream);
+                    dynamic versionMetadata = JsonConvert.DeserializeObject(await reader.ReadToEndAsync());
+                    var version = Version.Parse(versionMetadata.LatestVersion.ToString());
+                    if (version > Assembly.GetExecutingAssembly().GetName().Version)
+                        MessengerInstance.Send(new ShowMessageDialogMessageWithCallback("更新提示",
+                            $"现在有新版（v{version as Version}）可用，是否要前往下载？",
+                            MessageDialogStyle.AffirmativeAndNegative,
+                            result =>
+                            {
+                                if (result != MessageDialogResult.Affirmative)
+                                    return;
 
-                    PageHistory.Pop();
-                    CurrentPage = PageHistory.Peek();
-                    RaisePropertyChanged(() => SwitchBackButtonVisible);
-                }));
-            }
-        }
-
-        public RelayCommand StopSteamService
-        {
-            get
-            {
-                return _stopSteamService ??
-                       (_stopSteamService = new RelayCommand(async () => { await _steamClientService.StopAsync(); }));
-            }
-        }
-
-        public RelayCommand CheckForNewVersion
-        {
-            get
-            {
-                return _checkForNewVersion ?? (_checkForNewVersion = new RelayCommand(async () =>
+                                Process.Start(versionMetadata.DownloadUrl.ToString());
+                            }));
+                }
+                catch (WebException)
                 {
-                    try
-                    {
-                        var request = WebRequest.Create("http://steamcn.com/sfm_version_metadata.json");
-                        var response = await request.GetResponseAsync();
-                        var responseStream = response.GetResponseStream();
-                        if (responseStream == null)
-                            return;
-                        using (var reader = new StreamReader(responseStream))
-                        {
-                            dynamic versionMetadata = JsonConvert.DeserializeObject(await reader.ReadToEndAsync());
-                            var version = Version.Parse(versionMetadata.LatestVersion.ToString());
-                            if (version > Assembly.GetExecutingAssembly().GetName().Version)
-                                MessengerInstance.Send(new ShowMessageDialogMessageWithCallback("更新提示",
-                                    $"现在有新版（v{version as Version}）可用，是否要前往下载？",
-                                    MessageDialogStyle.AffirmativeAndNegative,
-                                    result =>
-                                    {
-                                        if (result != MessageDialogResult.Affirmative)
-                                            return;
-
-                                        Process.Start(versionMetadata.DownloadUrl.ToString());
-                                    }));
-                        }
-                    }
-                    catch (WebException)
-                    {
-                    }
-                }));
-            }
-        }
+                }
+            });
     }
 }

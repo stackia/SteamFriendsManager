@@ -8,14 +8,9 @@ namespace SteamFriendsManager.ViewModel
     {
         private RelayCommand _switchToLoginPage;
 
-        public RelayCommand SwitchToLoginPage
-        {
-            get
-            {
-                return _switchToLoginPage ??= new RelayCommand(
-                    () => { MessengerInstance.Send(new SwitchPageMessage(SwitchPageMessage.Page.Login)); });
-            }
-        }
+        public RelayCommand SwitchToLoginPage =>
+            _switchToLoginPage ??= new RelayCommand(
+                () => { MessengerInstance.Send(new SwitchPageMessage(SwitchPageMessage.Page.Login)); });
 
         public string Version
         {

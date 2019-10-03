@@ -373,27 +373,18 @@ namespace SteamFriendsManager.Utility
 
         private string GetTransitionName(TransitionType transition)
         {
-            switch (transition)
+            return transition switch
             {
-                default:
-                    return "DefaultTransition";
-                case TransitionType.Normal:
-                    return "Normal";
-                case TransitionType.Up:
-                    return "UpTransition";
-                case TransitionType.Down:
-                    return "DownTransition";
-                case TransitionType.Right:
-                    return "RightTransition";
-                case TransitionType.RightReplace:
-                    return "RightReplaceTransition";
-                case TransitionType.Left:
-                    return "LeftTransition";
-                case TransitionType.LeftReplace:
-                    return "LeftReplaceTransition";
-                case TransitionType.Custom:
-                    return CustomVisualStatesName;
-            }
+                TransitionType.Normal => "Normal",
+                TransitionType.Up => "UpTransition",
+                TransitionType.Down => "DownTransition",
+                TransitionType.Right => "RightTransition",
+                TransitionType.RightReplace => "RightReplaceTransition",
+                TransitionType.Left => "LeftTransition",
+                TransitionType.LeftReplace => "LeftReplaceTransition",
+                TransitionType.Custom => CustomVisualStatesName,
+                _ => "DefaultTransition"
+            };
         }
     }
 }
