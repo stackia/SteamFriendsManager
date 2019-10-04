@@ -1,16 +1,14 @@
 # Steam Friends Manager [![Build Status][1]][2]
 
-A new revolution of Steam friends management.
+Manage your Steam friends without the Steam client!
 
-## Install
-
-You have to install [the latest .Net Framework][3]. The program is build on the .Net Framework 4.5.
+## Download
 
 [Click Here to Download the Latest Release][4]
 
 ## Screenshots
 
-The program is still under development but there are some screenshots to preview its features:
+(currently only available in Chinese)
 
 ![Welcome Page][5]
 
